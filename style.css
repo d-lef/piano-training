@@ -241,11 +241,19 @@ button:hover {
     position: relative;
 }
 
+#staff-footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin-top: 5px;
+    min-height: 30px;
+}
+
 #timer {
     font-size: 20px;
     font-weight: bold;
     color: #666;
-    margin-top: 5px;
 }
 
 #start-overlay {
@@ -288,17 +296,14 @@ button:hover {
 }
 
 #note-label {
-    position: absolute;
-    bottom: 10px;
     font-size: 24px;
     font-weight: bold;
     color: #333;
-    opacity: 0;
-    transition: opacity 0.2s;
+    visibility: hidden;
 }
 
 #note-label.visible {
-    opacity: 1;
+    visibility: visible;
 }
 
 /* Feedback Overlay */
