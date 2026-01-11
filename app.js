@@ -60,12 +60,19 @@ const App = (function() {
         // Initialize staff
         Staff.init();
 
-        // Start first note
-        nextNote();
+        // Setup start button
+        const startBtn = document.getElementById('start-btn');
+        startBtn.addEventListener('click', startGame);
 
-        // Update displays
+        // Update displays (but don't start game yet)
         updateScoreDisplay();
         updateMissesPanel();
+    }
+
+    function startGame() {
+        const overlay = document.getElementById('start-overlay');
+        overlay.classList.add('hidden');
+        nextNote();
     }
 
     function loadSettings() {
@@ -160,7 +167,14 @@ const App = (function() {
         Storage.resetCurrentSession();
         updateScoreDisplay();
         updateMissesPanel();
-        nextNote();
+
+        // Show start overlay, stop timer
+        stopTimer();
+        const timerEl = document.getElementById('timer');
+        timerEl.textContent = '0.0s';
+        const overlay = document.getElementById('start-overlay');
+        overlay.classList.remove('hidden');
+        isWaitingForInput = false;
     }
 
     function nextNote() {

@@ -231,6 +231,39 @@ button:hover {
     margin-top: 5px;
 }
 
+#start-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+    border-radius: 8px;
+}
+
+#start-overlay.hidden {
+    display: none;
+}
+
+#start-btn {
+    font-size: 24px;
+    padding: 15px 50px;
+    background: #4ade80;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+#start-btn:hover {
+    background: #22c55e;
+}
+
 #staff {
     width: 100%;
     display: flex;
