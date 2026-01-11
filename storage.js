@@ -9,10 +9,11 @@ const Storage = (function() {
             settings: {
                 clef: 'treble',
                 rangeMin: 'C4',
-                rangeMax: 'C6',
+                rangeMax: 'B5',
                 showNoteNames: false,
                 includeAccidentals: false,
-                soundEnabled: true
+                soundEnabled: true,
+                darkMode: true
             },
             noteStats: {},  // { "C4": { attempts: 0, misses: 0, totalTime: 0 } }
             sessions: [],   // [{ date, correct, wrong, duration }]

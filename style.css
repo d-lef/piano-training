@@ -16,7 +16,7 @@ body {
 
 #app {
     width: 100%;
-    max-width: 1000px;
+    max-width: 1150px;
     padding: 20px;
     display: flex;
     flex-direction: column;
@@ -179,7 +179,6 @@ input[type="checkbox"] {
     padding: 20px;
     background: #16213e;
     border-radius: 8px;
-    overflow-x: auto;
 }
 
 #keyboard {
@@ -287,4 +286,40 @@ input[type="checkbox"] {
     #settings-panel {
         justify-content: center;
     }
+}
+
+/* Light Theme */
+body.light-theme {
+    background: #f0f4f8;
+    color: #333;
+}
+
+body.light-theme #settings-panel,
+body.light-theme #score-strip,
+body.light-theme #keyboard-container {
+    background: #e2e8f0;
+}
+
+body.light-theme select,
+body.light-theme button {
+    background: #cbd5e1;
+    color: #333;
+}
+
+body.light-theme select:hover,
+body.light-theme button:hover {
+    background: #94a3b8;
+}
+
+body.light-theme button {
+    background: #e94560;
+    color: #fff;
+}
+
+body.light-theme .score-item .label {
+    color: #666;
+}
+
+body.light-theme #keyboard-hints {
+    color: #666;
 }

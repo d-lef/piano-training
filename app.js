@@ -25,7 +25,13 @@ const App = (function() {
     const showNoteNamesCheckbox = document.getElementById('show-note-names');
     const accidentalsToggle = document.getElementById('accidentals-toggle');
     const soundToggle = document.getElementById('sound-toggle');
+    const themeToggle = document.getElementById('theme-toggle');
     const newSessionBtn = document.getElementById('new-session-btn');
+
+    // Apply theme
+    function applyTheme(isDark) {
+        document.body.classList.toggle('light-theme', !isDark);
+    }
 
     function init() {
         loadSettings();
@@ -34,6 +40,13 @@ const App = (function() {
 
         // Initialize keyboard with note callback
         Keyboard.init(handleNotePressed);
+
+        // Apply initial keyboard labels visibility
+        const settings = Storage.getSettings();
+        Keyboard.setLabelsVisible(settings.showNoteNames);
+
+        // Apply initial theme
+        applyTheme(settings.darkMode !== false);
 
         // Initialize staff
         Staff.init();
@@ -51,6 +64,7 @@ const App = (function() {
         showNoteNamesCheckbox.checked = settings.showNoteNames;
         accidentalsToggle.checked = settings.includeAccidentals;
         soundToggle.checked = settings.soundEnabled;
+        themeToggle.checked = settings.darkMode !== false;
     }
 
     function populateRangeSelectors() {
@@ -83,6 +97,7 @@ const App = (function() {
         showNoteNamesCheckbox.addEventListener('change', onSettingsChange);
         accidentalsToggle.addEventListener('change', onSettingsChange);
         soundToggle.addEventListener('change', onSettingsChange);
+        themeToggle.addEventListener('change', onSettingsChange);
 
         newSessionBtn.addEventListener('click', startNewSession);
     }
@@ -94,7 +109,8 @@ const App = (function() {
             rangeMax: rangeMaxSelect.value,
             showNoteNames: showNoteNamesCheckbox.checked,
             includeAccidentals: accidentalsToggle.checked,
-            soundEnabled: soundToggle.checked
+            soundEnabled: soundToggle.checked,
+            darkMode: themeToggle.checked
         };
 
         Storage.saveSettings(settings);
@@ -106,6 +122,12 @@ const App = (function() {
         } else {
             Staff.hideNoteLabel();
         }
+
+        // Update keyboard labels
+        Keyboard.setLabelsVisible(settings.showNoteNames);
+
+        // Update theme
+        applyTheme(settings.darkMode);
     }
 
     function updateAvailableNotes() {
@@ -133,9 +155,16 @@ const App = (function() {
             return;
         }
 
+        // Filter out current note to avoid repeats (if more than 1 note available)
+        const previousNote = currentNote;
+        let candidates = availableNotes;
+        if (previousNote && availableNotes.length > 1) {
+            candidates = availableNotes.filter(n => n.fullName !== previousNote.fullName);
+        }
+
         // Get random note (weighted by mistakes)
         const missedNotes = Storage.getMissedNotes();
-        currentNote = Notes.getRandomNote(availableNotes, missedNotes);
+        currentNote = Notes.getRandomNote(candidates, missedNotes);
 
         // Determine clef
         const settings = Storage.getSettings();
@@ -177,6 +206,9 @@ const App = (function() {
 
         const isCorrect = pressedMidi === correctMidi;
 
+        // Play sound for every key press
+        playSound(pressedMidi);
+
         // Record attempt
         Storage.recordAttempt(currentNote.fullName, isCorrect, responseTime);
 
@@ -184,7 +216,6 @@ const App = (function() {
             correctCount++;
             Keyboard.showCorrect(noteName);
             showFeedback('correct');
-            playSound(correctMidi);
 
             // Auto-advance after short delay
             setTimeout(() => {
@@ -194,14 +225,14 @@ const App = (function() {
         } else {
             wrongCount++;
             Keyboard.showWrong(noteName);
-            Keyboard.showCorrect(currentNote.fullName);
             showFeedback('wrong');
 
-            // Show correct answer, then advance
+            // Stay on same note - allow retry
             setTimeout(() => {
                 hideFeedback();
-                nextNote();
-            }, 800);
+                Keyboard.clearHighlights();
+                isWaitingForInput = true;  // Allow another attempt
+            }, 400);
         }
 
         updateScoreDisplay();
@@ -228,13 +259,17 @@ const App = (function() {
         feedbackEl.className = 'hidden';
     }
 
-    // Initialize audio context on first user interaction
-    function initAudio() {
+    // Initialize audio context and preload samples on first user interaction
+    async function initAudio() {
         if (!audioContext) {
             audioContext = new (window.AudioContext || window.webkitAudioContext)();
         }
         if (audioContext.state === 'suspended') {
-            audioContext.resume();
+            await audioContext.resume();
+        }
+        // Preload samples in background
+        if (!samplesLoaded) {
+            preloadSamples();
         }
     }
 
@@ -242,7 +277,66 @@ const App = (function() {
     document.addEventListener('click', initAudio, { once: true });
     document.addEventListener('keydown', initAudio, { once: true });
 
-    // Simple sound using Web Audio API
+    // Also start preloading when page loads (will wait for user gesture to actually decode)
+    window.addEventListener('load', () => {
+        // Start preloading after a short delay
+        setTimeout(initAudio, 100);
+    });
+
+    // Piano samples cache and base URL
+    const pianoSamples = {};
+    const SAMPLE_URL = 'https://gleitz.github.io/midi-js-soundfonts/FatBoy/acoustic_grand_piano-mp3/';
+    let samplesLoaded = false;
+
+    // Preload all samples for the keyboard range
+    async function preloadSamples() {
+        if (!audioContext) {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+
+        // Preload C3 to B5 (full keyboard range)
+        const startMidi = 48; // C3
+        const endMidi = 83;   // B5
+
+        const loadPromises = [];
+        for (let midi = startMidi; midi <= endMidi; midi++) {
+            loadPromises.push(loadSample(midi));
+        }
+
+        await Promise.all(loadPromises);
+        samplesLoaded = true;
+        console.log('Piano samples loaded');
+    }
+
+    // Convert MIDI note to sample name (e.g., 60 -> "C4", 61 -> "Db4")
+    function midiToSampleName(midi) {
+        const noteNames = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
+        const octave = Math.floor(midi / 12) - 1;
+        const noteIndex = midi % 12;
+        return noteNames[noteIndex] + octave;
+    }
+
+    // Load a piano sample
+    async function loadSample(midiNote) {
+        const sampleName = midiToSampleName(midiNote);
+        if (pianoSamples[sampleName]) {
+            return pianoSamples[sampleName];
+        }
+
+        try {
+            const url = SAMPLE_URL + sampleName + '.mp3';
+            const response = await fetch(url);
+            const arrayBuffer = await response.arrayBuffer();
+            const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+            pianoSamples[sampleName] = audioBuffer;
+            return audioBuffer;
+        } catch (e) {
+            console.log('Failed to load sample:', sampleName, e);
+            return null;
+        }
+    }
+
+    // Play piano sound using samples
     async function playSound(midiNote) {
         if (!soundToggle.checked) return;
 
@@ -256,23 +350,19 @@ const App = (function() {
                 await audioContext.resume();
             }
 
-            // Convert MIDI to frequency
-            const frequency = 440 * Math.pow(2, (midiNote - 69) / 12);
+            // Load and play the sample
+            const buffer = await loadSample(midiNote);
+            if (buffer) {
+                const source = audioContext.createBufferSource();
+                const gainNode = audioContext.createGain();
 
-            const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
+                source.buffer = buffer;
+                gainNode.gain.value = 0.7;
 
-            oscillator.type = 'sine';
-            oscillator.frequency.value = frequency;
-
-            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
-
-            oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-
-            oscillator.start(audioContext.currentTime);
-            oscillator.stop(audioContext.currentTime + 0.5);
+                source.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                source.start(0);
+            }
         } catch (e) {
             console.log('Audio not available:', e);
         }

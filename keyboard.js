@@ -65,10 +65,11 @@ const Keyboard = (function() {
                 key.dataset.note = fullName;
                 key.dataset.midi = Notes.getMidiNumber(noteName, octave);
 
-                // Add label
+                // Add label (Latin + Russian)
                 const label = document.createElement('span');
                 label.className = 'key-label';
-                label.textContent = fullName;
+                const russianName = Notes.getRussianName(fullName);
+                label.innerHTML = `${fullName}<br>${russianName}`;
                 key.appendChild(label);
 
                 key.addEventListener('click', () => handleKeyPress(fullName));
@@ -198,12 +199,23 @@ const Keyboard = (function() {
         return key ? parseInt(key.dataset.midi) : null;
     }
 
+    // Show or hide key labels
+    function setLabelsVisible(visible) {
+        Object.values(keyElements).forEach(key => {
+            const label = key.querySelector('.key-label');
+            if (label) {
+                label.style.display = visible ? 'block' : 'none';
+            }
+        });
+    }
+
     return {
         init,
         render,
         highlightKey,
         showCorrect,
         showWrong,
+        setLabelsVisible,
         clearHighlights,
         getMidiForNote
     };
