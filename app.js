@@ -76,6 +76,13 @@ const App = (function() {
         // Setup clear stats button
         document.getElementById('clear-stats-btn').addEventListener('click', clearStatistics);
 
+        // Auto-pause when window loses focus
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden && isWaitingForInput && !isPaused) {
+                togglePause();
+            }
+        });
+
         // Update displays (but don't start game yet)
         updateScoreDisplay();
         updateMissesPanel();
