@@ -2,6 +2,8 @@
 
 A simple app to practice reading music notes on the staff.
 
+🎹 **[Try it live](https://d-lef.github.io/piano-training/)**
+
 ## Features
 
 - Interactive piano keyboard (mouse, touch, or PC keyboard)
