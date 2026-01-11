@@ -34,6 +34,27 @@ const Staff = (function() {
         context.setFont('Arial', 10);
     }
 
+    // Re-initialize on orientation change or resize
+    function handleResize() {
+        // Force re-creation of renderer with new dimensions
+        renderer = null;
+        context = null;
+        init();
+    }
+
+    // Listen for orientation changes
+    window.addEventListener('orientationchange', () => {
+        // Small delay to let the browser settle
+        setTimeout(handleResize, 100);
+    });
+
+    // Also listen for resize events (covers rotation on some browsers)
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(handleResize, 150);
+    });
+
     function clear() {
         if (context) {
             context.clear();
