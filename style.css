@@ -704,3 +704,26 @@ body.light-theme #accuracy,
 body.light-theme #streak {
     color: #333;
 }
+
+/* Light theme text colors */
+body.light-theme .setting-group label {
+    color: #555;
+}
+
+body.light-theme .toggle-label {
+    color: #555;
+}
+
+body.light-theme .panel-title {
+    color: #555;
+}
+
+body.light-theme .panel-empty {
+    color: #888;
+}
+
+body.light-theme .miss-count,
+body.light-theme .time-badge {
+    background: #888;
+    color: #fff;
+}
