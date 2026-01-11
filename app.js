@@ -237,6 +237,11 @@ const App = (function() {
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
             }
 
+            // Resume if suspended (browser autoplay policy)
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+
             // Convert MIDI to frequency
             const frequency = 440 * Math.pow(2, (midiNote - 69) / 12);
 
