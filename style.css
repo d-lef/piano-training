@@ -86,6 +86,36 @@
     color: #FFFFFF;
 }
 
+/* Stats Button - hidden by default, shown on mobile */
+#stats-btn {
+    display: none;
+    position: fixed;
+    top: 15px;
+    left: 150px;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    background: transparent;
+    color: #B0B0B0;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 100;
+    transition: all 0.15s;
+    align-items: center;
+    justify-content: center;
+}
+
+#stats-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+#stats-btn:hover {
+    background: #3A3A3A;
+    color: #FFFFFF;
+}
+
 /* Settings Modal */
 .modal {
     position: fixed;
@@ -159,6 +189,68 @@
 
 .modal-body .setting-group:last-child {
     border-bottom: none;
+}
+
+/* Mobile stat items */
+.mobile-stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #353535;
+}
+
+.mobile-stat-item:last-of-type {
+    border-bottom: none;
+}
+
+.mobile-stat-label {
+    font-size: 14px;
+    color: #B0B0B0;
+}
+
+.mobile-stat-value {
+    font-size: 16px;
+    font-weight: bold;
+    color: #FFFFFF;
+}
+
+.modal-action-btn {
+    width: 100%;
+    margin-top: 15px;
+    padding: 12px;
+    background: #353535;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.modal-action-btn:hover {
+    background: #454545;
+}
+
+body.light-theme .mobile-stat-item {
+    border-bottom-color: #e0e0e0;
+}
+
+body.light-theme .mobile-stat-label {
+    color: #666;
+}
+
+body.light-theme .mobile-stat-value {
+    color: #333;
+}
+
+body.light-theme .modal-action-btn {
+    background: #e0e0e0;
+    color: #333;
+}
+
+body.light-theme .modal-action-btn:hover {
+    background: #d0d0d0;
 }
 
 /* Theme Button Style (matches mono smallButton) */
@@ -923,9 +1015,10 @@ button:active {
         justify-content: space-between;
     }
 
-    /* Hide side panels and settings panel in mobile landscape */
+    /* Hide side panels, settings panel, and score strip in mobile landscape */
     #side-panels,
-    #settings-panel {
+    #settings-panel,
+    #score-strip {
         display: none;
     }
 
@@ -939,6 +1032,20 @@ button:active {
     }
 
     #settings-btn svg {
+        width: 14px;
+        height: 14px;
+    }
+
+    /* Show stats button on mobile */
+    #stats-btn {
+        display: flex;
+        top: 5px;
+        left: 92px;
+        width: 24px;
+        height: 24px;
+    }
+
+    #stats-btn svg {
         width: 14px;
         height: 14px;
     }
@@ -1112,6 +1219,15 @@ body.light-theme #settings-btn {
 }
 
 body.light-theme #settings-btn:hover {
+    background: rgba(0, 0, 0, 0.08);
+    color: #333;
+}
+
+body.light-theme #stats-btn {
+    color: #666;
+}
+
+body.light-theme #stats-btn:hover {
     background: rgba(0, 0, 0, 0.08);
     color: #333;
 }

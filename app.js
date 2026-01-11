@@ -93,6 +93,9 @@ const App = (function() {
         // Setup mobile settings modal
         setupSettingsModal();
 
+        // Setup mobile stats modal
+        setupStatsModal();
+
         // Auto-pause when window loses focus
         document.addEventListener('visibilitychange', () => {
             if (document.hidden && isWaitingForInput && !isPaused) {
@@ -496,6 +499,70 @@ const App = (function() {
                 onSettingsChange();
             });
         }
+    }
+
+    // Mobile stats modal
+    function setupStatsModal() {
+        const statsBtn = document.getElementById('stats-btn');
+        const modal = document.getElementById('stats-modal');
+        const closeBtn = document.getElementById('close-stats-btn');
+        const mobileContainer = document.getElementById('mobile-stats-container');
+
+        if (!statsBtn || !modal || !closeBtn) return;
+
+        // Open modal
+        statsBtn.addEventListener('click', () => {
+            updateMobileStats();
+            modal.classList.remove('hidden');
+        });
+
+        // Close modal
+        closeBtn.addEventListener('click', () => {
+            modal.classList.add('hidden');
+        });
+
+        // Close on backdrop click
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.add('hidden');
+            }
+        });
+    }
+
+    // Update mobile stats display
+    function updateMobileStats() {
+        const mobileContainer = document.getElementById('mobile-stats-container');
+        if (!mobileContainer) return;
+
+        const stats = Storage.getStats();
+        const total = correctCount + wrongCount;
+        const accuracy = total > 0 ? (correctCount / total * 100).toFixed(0) : '--';
+
+        mobileContainer.innerHTML = `
+            <div class="mobile-stat-item">
+                <span class="mobile-stat-label">Correct</span>
+                <span class="mobile-stat-value">${correctCount}</span>
+            </div>
+            <div class="mobile-stat-item">
+                <span class="mobile-stat-label">Wrong</span>
+                <span class="mobile-stat-value">${wrongCount}</span>
+            </div>
+            <div class="mobile-stat-item">
+                <span class="mobile-stat-label">Accuracy</span>
+                <span class="mobile-stat-value">${accuracy}%</span>
+            </div>
+            <div class="mobile-stat-item">
+                <span class="mobile-stat-label">Streak</span>
+                <span class="mobile-stat-value">${stats.currentStreak}</span>
+            </div>
+            <button id="modal-new-session-btn" class="modal-action-btn">New Session</button>
+        `;
+
+        // Attach new session button handler
+        document.getElementById('modal-new-session-btn').addEventListener('click', () => {
+            startNewSession();
+            document.getElementById('stats-modal').classList.add('hidden');
+        });
     }
 
     function nextNote() {
