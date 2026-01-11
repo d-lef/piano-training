@@ -270,7 +270,57 @@ button:hover {
     border-radius: 8px;
 }
 
-#start-overlay.hidden {
+#start-overlay.hidden,
+#pause-overlay.hidden {
+    display: none;
+}
+
+#pause-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.95);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+    border-radius: 8px;
+}
+
+#continue-btn {
+    font-size: 24px;
+    padding: 15px 50px;
+    background: #60a5fa;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+#continue-btn:hover {
+    background: #3b82f6;
+}
+
+#pause-btn {
+    font-size: 16px;
+    padding: 4px 10px;
+    background: transparent;
+    color: #666;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+#pause-btn:hover {
+    background: #f0f0f0;
+    border-color: #999;
+}
+
+#pause-btn.hidden {
     display: none;
 }
 

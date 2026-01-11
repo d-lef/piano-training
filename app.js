@@ -7,6 +7,8 @@ const App = (function() {
     let correctCount = 0;
     let wrongCount = 0;
     let isWaitingForInput = false;
+    let isPaused = false;
+    let pausedElapsed = 0;  // Time elapsed when paused
     let sessionMisses = {};  // Track misses per note this session
     let sessionTimes = {};   // Track response times per note { note: [time1, time2, ...] }
     let availableNotes = [];
@@ -68,6 +70,12 @@ const App = (function() {
         const startBtn = document.getElementById('start-btn');
         startBtn.addEventListener('click', startGame);
 
+        // Setup pause/continue buttons
+        const pauseBtn = document.getElementById('pause-btn');
+        const continueBtn = document.getElementById('continue-btn');
+        pauseBtn.addEventListener('click', pauseGame);
+        continueBtn.addEventListener('click', continueGame);
+
         // Update displays (but don't start game yet)
         updateScoreDisplay();
         updateMissesPanel();
@@ -77,7 +85,38 @@ const App = (function() {
     function startGame() {
         const overlay = document.getElementById('start-overlay');
         overlay.classList.add('hidden');
+        document.getElementById('pause-btn').classList.remove('hidden');
+        isPaused = false;
+        pausedElapsed = 0;
         nextNote();
+    }
+
+    function pauseGame() {
+        if (isPaused) return;
+        isPaused = true;
+        isWaitingForInput = false;
+
+        // Save elapsed time
+        pausedElapsed = Date.now() - noteStartTime;
+        stopTimer();
+
+        // Show pause overlay
+        document.getElementById('pause-overlay').classList.remove('hidden');
+        document.getElementById('pause-btn').classList.add('hidden');
+    }
+
+    function continueGame() {
+        if (!isPaused) return;
+        isPaused = false;
+
+        // Restore timer from where we left off
+        noteStartTime = Date.now() - pausedElapsed;
+        isWaitingForInput = true;
+        startTimer();
+
+        // Hide pause overlay
+        document.getElementById('pause-overlay').classList.add('hidden');
+        document.getElementById('pause-btn').classList.remove('hidden');
     }
 
     function loadSettings() {
@@ -237,12 +276,17 @@ const App = (function() {
         updateMissesPanel();
         updateSlowestPanel();
 
-        // Show start overlay, stop timer
+        // Reset pause state
+        isPaused = false;
+        pausedElapsed = 0;
+
+        // Show start overlay, hide pause elements, stop timer
         stopTimer();
         const timerEl = document.getElementById('timer');
         timerEl.textContent = '0.0s';
-        const overlay = document.getElementById('start-overlay');
-        overlay.classList.remove('hidden');
+        document.getElementById('start-overlay').classList.remove('hidden');
+        document.getElementById('pause-overlay').classList.add('hidden');
+        document.getElementById('pause-btn').classList.add('hidden');
         isWaitingForInput = false;
     }
 
