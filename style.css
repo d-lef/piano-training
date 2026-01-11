@@ -620,6 +620,176 @@ button:active {
     }
 }
 
+/* Mobile styles */
+@media (max-width: 600px) {
+    body {
+        align-items: flex-start;
+    }
+
+    #app {
+        padding: 10px;
+        gap: 10px;
+    }
+
+    /* Hide side panels on mobile */
+    #side-panels {
+        display: none;
+    }
+
+    /* Stack layout vertically */
+    #main-layout {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    /* Settings panel - horizontal scroll */
+    #settings-panel {
+        padding: 10px;
+        gap: 10px;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        justify-content: flex-start;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .setting-group {
+        flex-shrink: 0;
+    }
+
+    /* Score strip */
+    #score-strip {
+        flex-wrap: wrap;
+        gap: 10px 20px;
+        padding: 10px;
+    }
+
+    /* Staff container */
+    #staff-container {
+        padding: 15px 10px;
+        min-height: 150px;
+    }
+
+    #start-btn {
+        width: 60px;
+        height: 60px;
+    }
+
+    #start-btn svg {
+        width: 28px;
+        height: 28px;
+    }
+
+    #note-label {
+        font-size: 18px;
+    }
+
+    #timer {
+        font-size: 16px;
+    }
+
+    /* Keyboard - smaller keys for mobile */
+    #keyboard-container {
+        padding: 10px 5px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    #keyboard {
+        height: 120px;
+    }
+
+    .white-key {
+        width: 32px;
+        height: 120px;
+        padding-bottom: 5px;
+    }
+
+    .black-key {
+        width: 22px;
+        height: 72px;
+    }
+
+    .key-label {
+        font-size: 9px;
+    }
+
+    /* Hide keyboard hints on mobile */
+    #keyboard-hints {
+        display: none;
+    }
+
+    /* Fixed buttons - adjust positions */
+    #help-btn {
+        top: 10px;
+        left: 10px;
+        width: 32px;
+        height: 32px;
+        font-size: 16px;
+    }
+
+    #coffee-btn {
+        top: 10px;
+        left: 50px;
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
+    }
+
+    #theme-btn {
+        top: 10px;
+        right: 10px;
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
+    }
+
+    /* Pause button */
+    #pause-toggle-btn {
+        width: 32px;
+        height: 32px;
+    }
+
+    #pause-toggle-btn svg {
+        width: 16px;
+        height: 16px;
+    }
+}
+
+/* Extra small screens */
+@media (max-width: 400px) {
+    .white-key {
+        width: 28px;
+        height: 100px;
+    }
+
+    .black-key {
+        width: 18px;
+        height: 60px;
+    }
+
+    #keyboard {
+        height: 100px;
+    }
+
+    .key-label {
+        font-size: 8px;
+    }
+
+    #score-strip {
+        gap: 8px 15px;
+        font-size: 13px;
+    }
+
+    .setting-group label {
+        font-size: 12px;
+    }
+
+    select {
+        padding: 4px 8px;
+        font-size: 12px;
+    }
+}
+
 /* Light Theme */
 body.light-theme {
     background: #f5f5f5;

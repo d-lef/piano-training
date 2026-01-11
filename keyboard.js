@@ -46,12 +46,28 @@ const Keyboard = (function() {
         onPlaySound = soundCallback;
         render();
         setupKeyboardListeners();
+
+        // Re-render on resize for responsive layout
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(render, 150);
+        });
     }
 
     function render() {
         containerElement.innerHTML = '';
 
-        const whiteKeyWidth = 50;
+        // Responsive key width based on viewport
+        let whiteKeyWidth = 50;
+        if (window.innerWidth <= 400) {
+            whiteKeyWidth = 28;
+        } else if (window.innerWidth <= 600) {
+            whiteKeyWidth = 32;
+        } else if (window.innerWidth <= 800) {
+            whiteKeyWidth = 40;
+        }
+
         let totalWhiteKeys = 0;
 
         // Create white keys first
@@ -105,7 +121,9 @@ const Keyboard = (function() {
 
                 // Position: after the corresponding white key
                 const whiteIndex = whiteKeyIndex + blackKey.afterWhite;
-                const leftPos = (whiteIndex * whiteKeyWidth) + whiteKeyWidth - 15;
+                // Black key width is roughly 60% of white key, center it between whites
+                const blackKeyOffset = whiteKeyWidth * 0.3;
+                const leftPos = (whiteIndex * whiteKeyWidth) + whiteKeyWidth - blackKeyOffset;
                 key.style.left = `${leftPos}px`;
 
                 key.addEventListener('click', () => handleKeyPress(fullName));

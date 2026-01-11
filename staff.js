@@ -7,16 +7,24 @@ const Staff = (function() {
     let context = null;
     const containerElement = document.getElementById('staff');
 
-    const STAFF_WIDTH = 240;
-    const STAFF_HEIGHT = 180;
+    // Responsive staff dimensions
+    function getStaffDimensions() {
+        if (window.innerWidth <= 400) {
+            return { width: 160, height: 120 };
+        } else if (window.innerWidth <= 600) {
+            return { width: 180, height: 140 };
+        }
+        return { width: 240, height: 180 };
+    }
 
     function init() {
         // Clear any existing content
         containerElement.innerHTML = '';
 
-        // Create SVG renderer
+        // Create SVG renderer with responsive dimensions
+        const dims = getStaffDimensions();
         renderer = new Renderer(containerElement, Renderer.Backends.SVG);
-        renderer.resize(STAFF_WIDTH, STAFF_HEIGHT);
+        renderer.resize(dims.width, dims.height);
         context = renderer.getContext();
         context.setFont('Arial', 10);
     }
@@ -32,8 +40,11 @@ const Staff = (function() {
         if (!renderer) init();
         clear();
 
+        // Get responsive dimensions
+        const dims = getStaffDimensions();
+
         // Create stave
-        const stave = new Stave(10, 30, STAFF_WIDTH - 20);
+        const stave = new Stave(10, 30, dims.width - 20);
         stave.addClef(clef);
         stave.setContext(context).draw();
 
@@ -61,7 +72,7 @@ const Staff = (function() {
         voice.addTickables([staveNote]);
 
         // Format and draw
-        new Formatter().joinVoices([voice]).format([voice], STAFF_WIDTH - 80);
+        new Formatter().joinVoices([voice]).format([voice], dims.width - 80);
         voice.draw(context, stave);
     }
 
