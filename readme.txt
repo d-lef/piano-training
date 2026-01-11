@@ -100,3 +100,9 @@ PORTABLE
 --------
 Copy this entire folder to any computer - it will work the same way.
 Settings and statistics are stored in your browser (won't transfer).
+
+
+ABOUT
+-----
+Developed by Daniel Lefanov
+https://www.linkedin.com/in/daniel-lefanov/
