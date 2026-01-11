@@ -12,69 +12,69 @@
         <!-- Settings Panel -->
         <div id="settings-panel">
             <div class="setting-group">
-                <label>Clef:</label>
-                <select id="clef-select">
+                <label title="Which clef to display notes on">Clef:</label>
+                <select id="clef-select" title="Treble (G clef), Bass (F clef), or both randomly">
                     <option value="treble">Treble</option>
                     <option value="bass">Bass</option>
                     <option value="both">Both</option>
                 </select>
             </div>
             <div class="setting-group">
-                <label>Range:</label>
-                <select id="range-min"></select>
+                <label title="Limit which notes appear in training">Range:</label>
+                <select id="range-min" title="Lowest note to practice"></select>
                 <span>to</span>
-                <select id="range-max"></select>
+                <select id="range-max" title="Highest note to practice"></select>
             </div>
             <div class="setting-group">
-                <label class="toggle">
+                <label class="toggle" title="Show the note name below the staff">
                     <input type="checkbox" id="show-note-names">
                     <span class="toggle-slider"></span>
                     <span class="toggle-label">Note hints</span>
                 </label>
             </div>
             <div class="setting-group">
-                <label class="toggle">
+                <label class="toggle" title="Show note names on piano keys">
                     <input type="checkbox" id="keyboard-labels-toggle">
                     <span class="toggle-slider"></span>
                     <span class="toggle-label">Key labels</span>
                 </label>
             </div>
             <div class="setting-group">
-                <label class="toggle">
+                <label class="toggle" title="Include sharps and flats (C#, D#, etc.)">
                     <input type="checkbox" id="accidentals-toggle">
                     <span class="toggle-slider"></span>
                     <span class="toggle-label">Accidentals</span>
                 </label>
             </div>
             <div class="setting-group">
-                <label class="toggle">
+                <label class="toggle" title="Prioritize notes you struggle with: missed notes and slow responses appear more often">
                     <input type="checkbox" id="smart-repetition-toggle" checked>
                     <span class="toggle-slider"></span>
                     <span class="toggle-label">Smart</span>
                 </label>
             </div>
             <div class="setting-group">
-                <label class="toggle">
+                <label class="toggle" title="Show response time counter (still tracks in background when hidden)">
                     <input type="checkbox" id="timer-toggle">
                     <span class="toggle-slider"></span>
                     <span class="toggle-label">Timer</span>
                 </label>
             </div>
             <div class="setting-group">
-                <label class="toggle">
+                <label class="toggle" title="Play piano sound when keys are pressed">
                     <input type="checkbox" id="sound-toggle" checked>
                     <span class="toggle-slider"></span>
                     <span class="toggle-label">Sound</span>
                 </label>
             </div>
             <div class="setting-group">
-                <label class="toggle">
+                <label class="toggle" title="Switch between dark and light theme">
                     <input type="checkbox" id="theme-toggle" checked>
                     <span class="toggle-slider"></span>
                     <span class="toggle-label">Dark</span>
                 </label>
             </div>
-            <button id="new-session-btn">New Session</button>
+            <button id="new-session-btn" title="Reset all scores and start fresh">New Session</button>
         </div>
 
         <!-- Main Layout with Side Panel -->
