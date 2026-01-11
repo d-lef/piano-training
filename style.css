@@ -994,7 +994,8 @@ button:active {
 }
 
 /* Mobile landscape - fit entire page to screen, no scrolling */
-@media (max-height: 500px) and (orientation: landscape) {
+/* Using 600px to account for browser address bar hiding/showing */
+@media (max-height: 600px) and (orientation: landscape) {
     html, body {
         overflow: hidden;
         height: 100vh;
@@ -1067,7 +1068,7 @@ button:active {
 
     #staff-container {
         padding: 3px;
-        min-height: 85px;
+        min-height: 100px;
         flex: 1 1 auto;
         overflow: visible;
         display: flex;

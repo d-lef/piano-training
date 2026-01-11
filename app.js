@@ -341,12 +341,13 @@ const App = (function() {
         isPaused = false;
         pausedElapsed = 0;
 
-        // Show start overlay, hide pause button, stop timer
+        // Show start overlay, hide pause button, stop timer, clear staff
         stopTimer();
         const timerEl = document.getElementById('timer');
         timerEl.textContent = '0.0s';
         document.getElementById('start-overlay').classList.remove('hidden');
         document.getElementById('pause-toggle-btn').classList.add('hidden');
+        Staff.clear();
         isWaitingForInput = false;
     }
 
