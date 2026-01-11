@@ -13,6 +13,8 @@ const Storage = (function() {
                 showNoteNames: false,
                 showKeyboardLabels: false,
                 includeAccidentals: false,
+                smartRepetition: true,
+                showTimer: false,
                 soundEnabled: true,
                 darkMode: true
             },
@@ -170,18 +172,18 @@ const Storage = (function() {
 
     // Get current session counts
     function getCurrentSession() {
-        return currentData.currentSession || { correct: 0, wrong: 0, misses: {} };
+        return currentData.currentSession || { correct: 0, wrong: 0, misses: {}, times: {} };
     }
 
     // Update current session counts
-    function updateCurrentSession(correct, wrong, misses) {
-        currentData.currentSession = { correct, wrong, misses: misses || {} };
+    function updateCurrentSession(correct, wrong, misses, times) {
+        currentData.currentSession = { correct, wrong, misses: misses || {}, times: times || {} };
         save(currentData);
     }
 
     // Reset current session
     function resetCurrentSession() {
-        currentData.currentSession = { correct: 0, wrong: 0, misses: {} };
+        currentData.currentSession = { correct: 0, wrong: 0, misses: {}, times: {} };
         save(currentData);
     }
 

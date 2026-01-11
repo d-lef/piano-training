@@ -48,6 +48,20 @@
             </div>
             <div class="setting-group">
                 <label class="toggle">
+                    <input type="checkbox" id="smart-repetition-toggle" checked>
+                    <span class="toggle-slider"></span>
+                    <span class="toggle-label">Smart</span>
+                </label>
+            </div>
+            <div class="setting-group">
+                <label class="toggle">
+                    <input type="checkbox" id="timer-toggle">
+                    <span class="toggle-slider"></span>
+                    <span class="toggle-label">Timer</span>
+                </label>
+            </div>
+            <div class="setting-group">
+                <label class="toggle">
                     <input type="checkbox" id="sound-toggle" checked>
                     <span class="toggle-slider"></span>
                     <span class="toggle-label">Sound</span>
@@ -65,10 +79,16 @@
 
         <!-- Main Layout with Side Panel -->
         <div id="main-layout">
-            <!-- Mistakes Panel (Left) -->
-            <div id="misses-panel">
-                <div class="panel-title">Mistakes</div>
-                <div class="panel-empty">None yet</div>
+            <!-- Side Panels (Left) -->
+            <div id="side-panels">
+                <div id="misses-panel">
+                    <div class="panel-title">Mistakes</div>
+                    <div class="panel-empty">None yet</div>
+                </div>
+                <div id="slowest-panel">
+                    <div class="panel-title">Slowest</div>
+                    <div class="panel-empty">None yet</div>
+                </div>
             </div>
 
             <!-- Center Content -->

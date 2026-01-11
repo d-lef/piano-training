@@ -36,13 +36,21 @@ body {
     gap: 15px;
 }
 
+/* Side Panels Container */
+#side-panels {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    flex-shrink: 0;
+}
+
 /* Misses Panel */
-#misses-panel {
+#misses-panel,
+#slowest-panel {
     width: 150px;
     background: #16213e;
     border-radius: 8px;
     padding: 12px;
-    flex-shrink: 0;
 }
 
 .panel-title {
@@ -75,6 +83,15 @@ body {
 
 .miss-count {
     background: #f87171;
+    color: #fff;
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.time-badge {
+    background: #60a5fa;
     color: #fff;
     padding: 2px 6px;
     border-radius: 10px;
@@ -464,7 +481,8 @@ body.light-theme #keyboard-hints {
     color: #666;
 }
 
-body.light-theme #misses-panel {
+body.light-theme #misses-panel,
+body.light-theme #slowest-panel {
     background: #e2e8f0;
 }
 

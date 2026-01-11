@@ -8,6 +8,7 @@ const App = (function() {
     let wrongCount = 0;
     let isWaitingForInput = false;
     let sessionMisses = {};  // Track misses per note this session
+    let sessionTimes = {};   // Track response times per note { note: [time1, time2, ...] }
     let availableNotes = [];
     let audioContext = null;
     let timerInterval = null;
@@ -27,6 +28,8 @@ const App = (function() {
     const showNoteNamesCheckbox = document.getElementById('show-note-names');
     const keyboardLabelsToggle = document.getElementById('keyboard-labels-toggle');
     const accidentalsToggle = document.getElementById('accidentals-toggle');
+    const smartRepetitionToggle = document.getElementById('smart-repetition-toggle');
+    const timerToggle = document.getElementById('timer-toggle');
     const soundToggle = document.getElementById('sound-toggle');
     const themeToggle = document.getElementById('theme-toggle');
     const newSessionBtn = document.getElementById('new-session-btn');
@@ -46,6 +49,7 @@ const App = (function() {
         correctCount = session.correct;
         wrongCount = session.wrong;
         sessionMisses = session.misses || {};
+        sessionTimes = session.times || {};
 
         // Initialize keyboard with note callback and sound callback
         Keyboard.init(handleNotePressed, playSound);
@@ -67,6 +71,7 @@ const App = (function() {
         // Update displays (but don't start game yet)
         updateScoreDisplay();
         updateMissesPanel();
+        updateSlowestPanel();
     }
 
     function startGame() {
@@ -81,8 +86,18 @@ const App = (function() {
         showNoteNamesCheckbox.checked = settings.showNoteNames;
         keyboardLabelsToggle.checked = settings.showKeyboardLabels;
         accidentalsToggle.checked = settings.includeAccidentals;
+        smartRepetitionToggle.checked = settings.smartRepetition !== false;
+        timerToggle.checked = settings.showTimer !== false;
         soundToggle.checked = settings.soundEnabled;
         themeToggle.checked = settings.darkMode !== false;
+
+        // Apply initial timer visibility
+        updateTimerVisibility(settings.showTimer !== false);
+    }
+
+    function updateTimerVisibility(visible) {
+        const timerEl = document.getElementById('timer');
+        timerEl.style.visibility = visible ? 'visible' : 'hidden';
     }
 
     function populateRangeSelectors() {
@@ -115,6 +130,8 @@ const App = (function() {
         showNoteNamesCheckbox.addEventListener('change', onSettingsChange);
         keyboardLabelsToggle.addEventListener('change', onSettingsChange);
         accidentalsToggle.addEventListener('change', onSettingsChange);
+        smartRepetitionToggle.addEventListener('change', onSettingsChange);
+        timerToggle.addEventListener('change', onSettingsChange);
         soundToggle.addEventListener('change', onSettingsChange);
         themeToggle.addEventListener('change', onSettingsChange);
 
@@ -129,6 +146,8 @@ const App = (function() {
             showNoteNames: showNoteNamesCheckbox.checked,
             showKeyboardLabels: keyboardLabelsToggle.checked,
             includeAccidentals: accidentalsToggle.checked,
+            smartRepetition: smartRepetitionToggle.checked,
+            showTimer: timerToggle.checked,
             soundEnabled: soundToggle.checked,
             darkMode: themeToggle.checked
         };
@@ -146,6 +165,9 @@ const App = (function() {
         // Update keyboard labels
         Keyboard.setLabelsVisible(settings.showKeyboardLabels);
 
+        // Update timer visibility
+        updateTimerVisibility(settings.showTimer);
+
         // Update theme
         applyTheme(settings.darkMode);
     }
@@ -159,14 +181,61 @@ const App = (function() {
         );
     }
 
+    // Smart repetition: weighted note selection based on mistakes and response time
+    function getSmartNote(candidates) {
+        const weights = [];
+        const BASE_WEIGHT = 1;
+        const MISS_WEIGHT = 3;      // Each miss adds this much weight
+        const TIME_WEIGHT = 0.002;  // Per millisecond above 1 second
+
+        for (const note of candidates) {
+            let weight = BASE_WEIGHT;
+
+            // Add weight for mistakes in this session
+            const misses = sessionMisses[note.fullName] || 0;
+            weight += misses * MISS_WEIGHT;
+
+            // Add weight for slow response times
+            const times = sessionTimes[note.fullName];
+            if (times && times.length > 0) {
+                const avgTime = times.reduce((a, b) => a + b, 0) / times.length;
+                // Notes taking more than 1 second get extra weight
+                if (avgTime > 1000) {
+                    weight += (avgTime - 1000) * TIME_WEIGHT;
+                }
+            } else {
+                // Notes never answered get a slight boost (need practice)
+                weight += 0.5;
+            }
+
+            weights.push({ note, weight });
+        }
+
+        // Weighted random selection
+        const totalWeight = weights.reduce((sum, w) => sum + w.weight, 0);
+        let random = Math.random() * totalWeight;
+
+        for (const { note, weight } of weights) {
+            random -= weight;
+            if (random <= 0) {
+                return note;
+            }
+        }
+
+        // Fallback to last note
+        return weights[weights.length - 1].note;
+    }
+
     function startNewSession() {
         correctCount = 0;
         wrongCount = 0;
         sessionMisses = {};
+        sessionTimes = {};
         Storage.resetStreak();
         Storage.resetCurrentSession();
         updateScoreDisplay();
         updateMissesPanel();
+        updateSlowestPanel();
 
         // Show start overlay, stop timer
         stopTimer();
@@ -192,12 +261,16 @@ const App = (function() {
             candidates = availableNotes.filter(n => n.fullName !== previousNote.fullName);
         }
 
-        // Get random note (weighted by mistakes)
-        const missedNotes = Storage.getMissedNotes();
-        currentNote = Notes.getRandomNote(candidates, missedNotes);
+        // Get random note using smart repetition or simple random
+        const settings = Storage.getSettings();
+        if (settings.smartRepetition) {
+            currentNote = getSmartNote(candidates);
+        } else {
+            // Simple random selection
+            currentNote = candidates[Math.floor(Math.random() * candidates.length)];
+        }
 
         // Determine clef
-        const settings = Storage.getSettings();
         let clef = settings.clef;
         if (clef === 'both') {
             clef = Notes.getClefForNote(currentNote);
@@ -263,6 +336,13 @@ const App = (function() {
         if (isCorrect) {
             correctCount++;
             stopTimer();  // Stop timer on correct
+
+            // Track response time for this note
+            if (!sessionTimes[currentNote.fullName]) {
+                sessionTimes[currentNote.fullName] = [];
+            }
+            sessionTimes[currentNote.fullName].push(responseTime);
+
             Keyboard.showCorrect(noteName);
             showFeedback('correct');
 
@@ -288,9 +368,10 @@ const App = (function() {
         }
 
         // Save session and update displays
-        Storage.updateCurrentSession(correctCount, wrongCount, sessionMisses);
+        Storage.updateCurrentSession(correctCount, wrongCount, sessionMisses, sessionTimes);
         updateScoreDisplay();
         updateMissesPanel();
+        updateSlowestPanel();
     }
 
     function updateScoreDisplay() {
@@ -323,6 +404,37 @@ const App = (function() {
         for (const [note, count] of sorted) {
             const russianName = Notes.getRussianName(note);
             html += `<div class="miss-item"><span>${note} (${russianName})</span><span class="miss-count">${count}</span></div>`;
+        }
+        panel.innerHTML = html;
+    }
+
+    function updateSlowestPanel() {
+        const panel = document.getElementById('slowest-panel');
+        if (!panel) return;
+
+        // Calculate average time per note
+        const avgTimes = [];
+        for (const [note, times] of Object.entries(sessionTimes)) {
+            if (times.length > 0) {
+                const avg = times.reduce((a, b) => a + b, 0) / times.length;
+                avgTimes.push({ note, avg, count: times.length });
+            }
+        }
+
+        // Sort by average time descending (slowest first)
+        avgTimes.sort((a, b) => b.avg - a.avg);
+        const top10 = avgTimes.slice(0, 10);
+
+        if (top10.length === 0) {
+            panel.innerHTML = '<div class="panel-title">Slowest</div><div class="panel-empty">None yet</div>';
+            return;
+        }
+
+        let html = '<div class="panel-title">Slowest</div>';
+        for (const { note, avg } of top10) {
+            const russianName = Notes.getRussianName(note);
+            const timeStr = (avg / 1000).toFixed(1) + 's';
+            html += `<div class="miss-item"><span>${note} (${russianName})</span><span class="time-badge">${timeStr}</span></div>`;
         }
         panel.innerHTML = html;
     }
