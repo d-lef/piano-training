@@ -14,7 +14,8 @@ const Staff = (function() {
 
         if (isMobileLandscape) {
             // VexFlow needs minimum space: ~30px above staff for clef, ~40px for staff lines, ~30px below for ledger lines
-            return { width: 120, height: 100, scale: 0.85 };
+            // Render at 133x111 internally, display at 120x100 (scale 0.9)
+            return { width: 120, height: 100, scale: 0.9 };
         } else if (window.innerWidth <= 400) {
             return { width: 160, height: 120 };
         } else if (window.innerWidth <= 600) {
@@ -24,14 +25,17 @@ const Staff = (function() {
     }
 
     function init() {
-        // Clear any existing content
+        // Clear any existing content and reset container styles
         containerElement.innerHTML = '';
+        containerElement.style.width = '';
+        containerElement.style.height = '';
+        containerElement.style.overflow = '';
 
         // Create SVG renderer with responsive dimensions
         const dims = getStaffDimensions();
         renderer = new Renderer(containerElement, Renderer.Backends.SVG);
 
-        // If scale is provided, render at larger internal size then scale down
+        // If scale is provided, render at larger internal size then use CSS to scale down
         const scale = dims.scale || 1;
         const internalWidth = Math.round(dims.width / scale);
         const internalHeight = Math.round(dims.height / scale);
@@ -39,14 +43,17 @@ const Staff = (function() {
         renderer.resize(internalWidth, internalHeight);
         context = renderer.getContext();
 
-        // Apply scale transform and set the SVG to display at target size
+        // Use CSS transform to scale down the SVG (not context.scale which causes issues)
         if (scale !== 1) {
-            context.scale(scale, scale);
             const svg = containerElement.querySelector('svg');
             if (svg) {
-                svg.style.width = dims.width + 'px';
-                svg.style.height = dims.height + 'px';
+                svg.style.transform = `scale(${scale})`;
+                svg.style.transformOrigin = 'top left';
             }
+            // Set container size to match scaled output
+            containerElement.style.width = dims.width + 'px';
+            containerElement.style.height = dims.height + 'px';
+            containerElement.style.overflow = 'hidden';
         }
 
         context.setFont('Arial', 10);
