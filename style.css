@@ -1068,8 +1068,11 @@ button:active {
     #staff-container {
         padding: 3px;
         min-height: 85px;
-        flex: 0 0 auto;
+        flex: 1 1 auto;
         overflow: visible;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
     }
 
     #staff-footer {
@@ -1080,14 +1083,13 @@ button:active {
     #keyboard-container {
         padding: 3px;
         overflow: hidden;
-        flex: 1 1 auto;
+        flex: 0 0 auto;
         display: flex;
         align-items: center;
     }
 
     #keyboard {
-        height: calc(100vh - 150px);
-        max-height: 100px;
+        height: 90px;
     }
 
     /* Size keys to fit: 21 white keys must fit viewport */
