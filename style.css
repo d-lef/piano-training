@@ -958,25 +958,30 @@ button:active {
     position: fixed;
     top: 0;
     left: 0;
-    right: 0;
-    bottom: 0;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
     background: #252525;
     z-index: 9999;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     gap: 20px;
+    overflow: hidden;
 }
 
 .rotate-icon {
-    width: 64px;
-    height: 64px;
+    width: 80px;
+    height: 80px;
     color: #B0B0B0;
+    flex-shrink: 0;
 }
 
 .rotate-text {
     font-size: 18px;
     color: #B0B0B0;
+    text-align: center;
+    padding: 0 20px;
 }
 
 /* Show rotate overlay on mobile portrait only */

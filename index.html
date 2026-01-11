@@ -5,16 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Piano Note Trainer</title>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect x='5' y='20' width='90' height='60' rx='4' fill='%23333'/><rect x='10' y='25' width='11' height='50' fill='white' rx='2'/><rect x='23' y='25' width='11' height='50' fill='white' rx='2'/><rect x='36' y='25' width='11' height='50' fill='white' rx='2'/><rect x='49' y='25' width='11' height='50' fill='white' rx='2'/><rect x='62' y='25' width='11' height='50' fill='white' rx='2'/><rect x='75' y='25' width='11' height='50' fill='white' rx='2'/><rect x='17' y='25' width='8' height='30' fill='%23333' rx='1'/><rect x='30' y='25' width='8' height='30' fill='%23333' rx='1'/><rect x='56' y='25' width='8' height='30' fill='%23333' rx='1'/><rect x='69' y='25' width='8' height='30' fill='%23333' rx='1'/><rect x='82' y='25' width='8' height='30' fill='%23333' rx='1'/></svg>">
-    <link rel="stylesheet" href="style.css?v=21">
+    <link rel="stylesheet" href="style.css?v=22">
     <script src="https://unpkg.com/vexflow@4.2.3/build/cjs/vexflow.js"></script>
 </head>
 <body>
     <!-- Rotate Phone Overlay (mobile portrait only) -->
     <div id="rotate-overlay">
-        <svg class="rotate-icon" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M16.48 2.52c3.27 1.55 5.61 4.72 5.97 8.48h1.5C23.44 4.84 18.29 0 12 0l-.66.03 3.81 3.81 1.33-1.32zm-6.25-.77c-.59-.59-1.54-.59-2.12 0L1.75 8.11c-.59.59-.59 1.54 0 2.12l12.02 12.02c.59.59 1.54.59 2.12 0l6.36-6.36c.59-.59.59-1.54 0-2.12L10.23 1.75zm4.6 19.44L2.81 9.17l6.36-6.36 12.02 12.02-6.36 6.36zm-7.31.29l-1.33 1.32c-3.27-1.55-5.61-4.72-5.97-8.48h-1.5C.56 19.16 5.71 24 12 24l.66-.03-3.81-3.81z"/>
+        <svg class="rotate-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="4" y="2" width="16" height="20" rx="2" transform="rotate(90 12 12)"/>
+            <path d="M12 2 L12 6 M10 4 L12 2 L14 4" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
-        <div class="rotate-text">Rotate your phone</div>
+        <div class="rotate-text">Rotate your phone to landscape</div>
     </div>
 
     <a href="help.html" id="help-btn" title="Help &amp; Instructions">?</a>
