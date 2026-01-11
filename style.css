@@ -29,6 +29,29 @@
     color: #fff;
 }
 
+#coffee-btn {
+    position: fixed;
+    top: 15px;
+    left: 60px;
+    width: 36px;
+    height: 36px;
+    background: #ffdd00;
+    color: #000;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    text-decoration: none;
+    z-index: 100;
+    transition: all 0.2s;
+}
+
+#coffee-btn:hover {
+    background: #ffeb55;
+    transform: scale(1.1);
+}
+
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background: #1a1a2e;
