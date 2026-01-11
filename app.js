@@ -90,6 +90,9 @@ const App = (function() {
         // Setup clear stats button
         document.getElementById('clear-stats-btn').addEventListener('click', clearStatistics);
 
+        // Setup mobile settings modal
+        setupSettingsModal();
+
         // Auto-pause when window loses focus
         document.addEventListener('visibilitychange', () => {
             if (document.hidden && isWaitingForInput && !isPaused) {
@@ -349,6 +352,149 @@ const App = (function() {
         Storage.clearStatistics();
         updateMissesPanel();
         updateSlowestPanel();
+    }
+
+    // Mobile settings modal
+    function setupSettingsModal() {
+        const settingsBtn = document.getElementById('settings-btn');
+        const modal = document.getElementById('settings-modal');
+        const closeBtn = document.getElementById('close-settings-btn');
+        const mobileContainer = document.getElementById('mobile-settings-container');
+        const settingsPanel = document.getElementById('settings-panel');
+
+        if (!settingsBtn || !modal || !closeBtn) return;
+
+        // Open modal
+        settingsBtn.addEventListener('click', () => {
+            // Clone settings into modal
+            mobileContainer.innerHTML = '';
+            const settingGroups = settingsPanel.querySelectorAll('.setting-group');
+            settingGroups.forEach(group => {
+                const clone = group.cloneNode(true);
+                mobileContainer.appendChild(clone);
+            });
+
+            // Re-attach event listeners to cloned elements
+            attachModalSettingsListeners();
+
+            modal.classList.remove('hidden');
+        });
+
+        // Close modal
+        closeBtn.addEventListener('click', () => {
+            modal.classList.add('hidden');
+        });
+
+        // Close on backdrop click
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.add('hidden');
+            }
+        });
+    }
+
+    // Attach event listeners to modal settings
+    function attachModalSettingsListeners() {
+        const mobileContainer = document.getElementById('mobile-settings-container');
+
+        // Naming style
+        const modalNamingStyle = mobileContainer.querySelector('#naming-style-select');
+        if (modalNamingStyle) {
+            modalNamingStyle.id = 'modal-naming-style-select';
+            modalNamingStyle.value = namingStyleSelect.value;
+            modalNamingStyle.addEventListener('change', () => {
+                namingStyleSelect.value = modalNamingStyle.value;
+                onSettingsChange();
+            });
+        }
+
+        // Clef
+        const modalClef = mobileContainer.querySelector('#clef-select');
+        if (modalClef) {
+            modalClef.id = 'modal-clef-select';
+            modalClef.value = clefSelect.value;
+            modalClef.addEventListener('change', () => {
+                clefSelect.value = modalClef.value;
+                onSettingsChange();
+            });
+        }
+
+        // Range min
+        const modalRangeMin = mobileContainer.querySelector('#range-min');
+        if (modalRangeMin) {
+            modalRangeMin.id = 'modal-range-min';
+            modalRangeMin.value = rangeMinSelect.value;
+            modalRangeMin.addEventListener('change', () => {
+                rangeMinSelect.value = modalRangeMin.value;
+                onSettingsChange();
+            });
+        }
+
+        // Range max
+        const modalRangeMax = mobileContainer.querySelector('#range-max');
+        if (modalRangeMax) {
+            modalRangeMax.id = 'modal-range-max';
+            modalRangeMax.value = rangeMaxSelect.value;
+            modalRangeMax.addEventListener('change', () => {
+                rangeMaxSelect.value = modalRangeMax.value;
+                onSettingsChange();
+            });
+        }
+
+        // Show note names
+        const modalShowNotes = mobileContainer.querySelector('#show-note-names');
+        if (modalShowNotes) {
+            modalShowNotes.id = 'modal-show-note-names';
+            modalShowNotes.checked = showNoteNamesCheckbox.checked;
+            modalShowNotes.addEventListener('change', () => {
+                showNoteNamesCheckbox.checked = modalShowNotes.checked;
+                onSettingsChange();
+            });
+        }
+
+        // Keyboard labels
+        const modalKeyboardLabels = mobileContainer.querySelector('#keyboard-labels-toggle');
+        if (modalKeyboardLabels) {
+            modalKeyboardLabels.id = 'modal-keyboard-labels-toggle';
+            modalKeyboardLabels.checked = keyboardLabelsToggle.checked;
+            modalKeyboardLabels.addEventListener('change', () => {
+                keyboardLabelsToggle.checked = modalKeyboardLabels.checked;
+                onSettingsChange();
+            });
+        }
+
+        // Accidentals
+        const modalAccidentals = mobileContainer.querySelector('#accidentals-toggle');
+        if (modalAccidentals) {
+            modalAccidentals.id = 'modal-accidentals-toggle';
+            modalAccidentals.checked = accidentalsToggle.checked;
+            modalAccidentals.addEventListener('change', () => {
+                accidentalsToggle.checked = modalAccidentals.checked;
+                onSettingsChange();
+            });
+        }
+
+        // Timer
+        const modalTimer = mobileContainer.querySelector('#timer-toggle');
+        if (modalTimer) {
+            modalTimer.id = 'modal-timer-toggle';
+            modalTimer.checked = timerToggle.checked;
+            modalTimer.addEventListener('change', () => {
+                timerToggle.checked = modalTimer.checked;
+                onSettingsChange();
+            });
+        }
+
+        // Sound
+        const modalSound = mobileContainer.querySelector('#sound-toggle');
+        if (modalSound) {
+            modalSound.id = 'modal-sound-toggle';
+            modalSound.checked = soundToggle.checked;
+            modalSound.addEventListener('change', () => {
+                soundToggle.checked = modalSound.checked;
+                onSettingsChange();
+            });
+        }
     }
 
     function nextNote() {

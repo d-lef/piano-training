@@ -5,13 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Piano Note Trainer</title>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect x='5' y='20' width='90' height='60' rx='4' fill='%23333'/><rect x='10' y='25' width='11' height='50' fill='white' rx='2'/><rect x='23' y='25' width='11' height='50' fill='white' rx='2'/><rect x='36' y='25' width='11' height='50' fill='white' rx='2'/><rect x='49' y='25' width='11' height='50' fill='white' rx='2'/><rect x='62' y='25' width='11' height='50' fill='white' rx='2'/><rect x='75' y='25' width='11' height='50' fill='white' rx='2'/><rect x='17' y='25' width='8' height='30' fill='%23333' rx='1'/><rect x='30' y='25' width='8' height='30' fill='%23333' rx='1'/><rect x='56' y='25' width='8' height='30' fill='%23333' rx='1'/><rect x='69' y='25' width='8' height='30' fill='%23333' rx='1'/><rect x='82' y='25' width='8' height='30' fill='%23333' rx='1'/></svg>">
-    <link rel="stylesheet" href="style.css?v=12">
+    <link rel="stylesheet" href="style.css?v=14">
     <script src="https://unpkg.com/vexflow@4.2.3/build/cjs/vexflow.js"></script>
 </head>
 <body>
+    <!-- Rotate Phone Overlay (mobile portrait only) -->
+    <div id="rotate-overlay">
+        <svg class="rotate-icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M16.48 2.52c3.27 1.55 5.61 4.72 5.97 8.48h1.5C23.44 4.84 18.29 0 12 0l-.66.03 3.81 3.81 1.33-1.32zm-6.25-.77c-.59-.59-1.54-.59-2.12 0L1.75 8.11c-.59.59-.59 1.54 0 2.12l12.02 12.02c.59.59 1.54.59 2.12 0l6.36-6.36c.59-.59.59-1.54 0-2.12L10.23 1.75zm4.6 19.44L2.81 9.17l6.36-6.36 12.02 12.02-6.36 6.36zm-7.31.29l-1.33 1.32c-3.27-1.55-5.61-4.72-5.97-8.48h-1.5C.56 19.16 5.71 24 12 24l.66-.03-3.81-3.81z"/>
+        </svg>
+        <div class="rotate-text">Rotate your phone</div>
+    </div>
+
     <a href="help.html" id="help-btn" title="Help &amp; Instructions">?</a>
     <a href="https://buymeacoffee.com/daniel_l" target="_blank" id="coffee-btn" title="Buy me a coffee">☕</a>
+    <button id="settings-btn" title="Settings"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.14 12.94c.04-.31.06-.63.06-.94 0-.31-.02-.63-.06-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg></button>
     <button id="theme-btn" title="Toggle dark/light theme">☾</button>
+
+    <!-- Mobile Settings Modal -->
+    <div id="settings-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="modal-title">Settings</span>
+                <button id="close-settings-btn" class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body" id="mobile-settings-container">
+                <!-- Settings will be cloned here on mobile -->
+            </div>
+        </div>
+    </div>
     <div id="app">
         <!-- Settings Panel -->
         <div id="settings-panel">

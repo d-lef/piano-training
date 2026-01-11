@@ -60,7 +60,16 @@ const Keyboard = (function() {
 
         // Responsive key width based on viewport
         let whiteKeyWidth = 50;
-        if (window.innerWidth <= 400) {
+        const totalWhiteKeysNeeded = NUM_OCTAVES * 7; // 21 keys for 3 octaves
+
+        // Mobile landscape: fit all keys to viewport
+        const isLandscape = window.innerWidth > window.innerHeight;
+        const isMobileLandscape = isLandscape && window.innerHeight <= 500;
+
+        if (isMobileLandscape) {
+            // Calculate width to fit all keys with some padding
+            whiteKeyWidth = Math.floor((window.innerWidth - 30) / totalWhiteKeysNeeded);
+        } else if (window.innerWidth <= 400) {
             whiteKeyWidth = 28;
         } else if (window.innerWidth <= 600) {
             whiteKeyWidth = 32;

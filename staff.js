@@ -9,7 +9,12 @@ const Staff = (function() {
 
     // Responsive staff dimensions
     function getStaffDimensions() {
-        if (window.innerWidth <= 400) {
+        const isLandscape = window.innerWidth > window.innerHeight;
+        const isMobileLandscape = isLandscape && window.innerHeight <= 500;
+
+        if (isMobileLandscape) {
+            return { width: 140, height: 80 };
+        } else if (window.innerWidth <= 400) {
             return { width: 160, height: 120 };
         } else if (window.innerWidth <= 600) {
             return { width: 180, height: 140 };
@@ -43,8 +48,11 @@ const Staff = (function() {
         // Get responsive dimensions
         const dims = getStaffDimensions();
 
+        // Adjust stave y position for smaller displays
+        const staveY = dims.height <= 100 ? 15 : 30;
+
         // Create stave
-        const stave = new Stave(10, 30, dims.width - 20);
+        const stave = new Stave(10, staveY, dims.width - 20);
         stave.addClef(clef);
         stave.setContext(context).draw();
 
