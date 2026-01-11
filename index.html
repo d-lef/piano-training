@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Piano Note Trainer</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/vexflow@4.2.3/build/cjs/vexflow.js"></script>
+</head>
+<body>
+    <div id="app">
+        <!-- Settings Panel -->
+        <div id="settings-panel">
+            <div class="setting-group">
+                <label>Clef:</label>
+                <select id="clef-select">
+                    <option value="treble">Treble</option>
+                    <option value="bass">Bass</option>
+                    <option value="both">Both</option>
+                </select>
+            </div>
+            <div class="setting-group">
+                <label>Range:</label>
+                <select id="range-min"></select>
+                <span>to</span>
+                <select id="range-max"></select>
+            </div>
+            <div class="setting-group">
+                <label>
+                    <input type="checkbox" id="show-note-names">
+                    Show note names
+                </label>
+            </div>
+            <div class="setting-group">
+                <label>
+                    <input type="checkbox" id="accidentals-toggle">
+                    Include accidentals
+                </label>
+            </div>
+            <div class="setting-group">
+                <label>
+                    <input type="checkbox" id="sound-toggle" checked>
+                    Sound
+                </label>
+            </div>
+            <button id="new-session-btn">New Session</button>
+        </div>
+
+        <!-- Score Strip -->
+        <div id="score-strip">
+            <div class="score-item">
+                <span class="label">Correct:</span>
+                <span id="correct-count">0</span>
+            </div>
+            <div class="score-item">
+                <span class="label">Wrong:</span>
+                <span id="wrong-count">0</span>
+            </div>
+            <div class="score-item">
+                <span class="label">Accuracy:</span>
+                <span id="accuracy">--%</span>
+            </div>
+            <div class="score-item">
+                <span class="label">Streak:</span>
+                <span id="streak">0</span>
+            </div>
+        </div>
+
+        <!-- Staff Display -->
+        <div id="staff-container">
+            <div id="staff"></div>
+            <div id="note-label"></div>
+        </div>
+
+        <!-- Feedback Overlay -->
+        <div id="feedback" class="hidden"></div>
+
+        <!-- Piano Keyboard -->
+        <div id="keyboard-container">
+            <div id="keyboard"></div>
+        </div>
+
+        <!-- Keyboard Hints -->
+        <div id="keyboard-hints">
+            <span>PC Keyboard: Z X C V B N M = white keys (C D E F G A B) | S D G H J = black keys | Arrow Up/Down = octave</span>
+        </div>
+    </div>
+
+    <script src="notes.js"></script>
+    <script src="staff.js"></script>
+    <script src="keyboard.js"></script>
+    <script src="storage.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

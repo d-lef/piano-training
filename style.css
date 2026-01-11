@@ -1,0 +1,290 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #1a1a2e;
+    color: #eee;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#app {
+    width: 100%;
+    max-width: 1000px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Settings Panel */
+#settings-panel {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: center;
+    padding: 15px;
+    background: #16213e;
+    border-radius: 8px;
+}
+
+.setting-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.setting-group label {
+    font-size: 14px;
+    color: #aaa;
+}
+
+select, button {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    background: #0f3460;
+    color: #fff;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+select:hover, button:hover {
+    background: #1a4a7a;
+}
+
+button {
+    background: #e94560;
+}
+
+button:hover {
+    background: #ff6b6b;
+}
+
+input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+/* Score Strip */
+#score-strip {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    padding: 12px;
+    background: #16213e;
+    border-radius: 8px;
+}
+
+.score-item {
+    display: flex;
+    gap: 8px;
+}
+
+.score-item .label {
+    color: #888;
+}
+
+#correct-count {
+    color: #4ade80;
+    font-weight: bold;
+}
+
+#wrong-count {
+    color: #f87171;
+    font-weight: bold;
+}
+
+#accuracy {
+    color: #60a5fa;
+    font-weight: bold;
+}
+
+#streak {
+    color: #fbbf24;
+    font-weight: bold;
+}
+
+/* Staff Container */
+#staff-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    min-height: 180px;
+    position: relative;
+}
+
+#staff {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+#note-label {
+    position: absolute;
+    bottom: 10px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+#note-label.visible {
+    opacity: 1;
+}
+
+/* Feedback Overlay */
+#feedback {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 72px;
+    font-weight: bold;
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+#feedback.correct {
+    color: #4ade80;
+    opacity: 1;
+}
+
+#feedback.wrong {
+    color: #f87171;
+    opacity: 1;
+}
+
+#feedback.hidden {
+    opacity: 0;
+}
+
+/* Keyboard Container */
+#keyboard-container {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    background: #16213e;
+    border-radius: 8px;
+    overflow-x: auto;
+}
+
+#keyboard {
+    display: flex;
+    position: relative;
+    height: 180px;
+}
+
+/* Piano Keys */
+.white-key {
+    width: 50px;
+    height: 180px;
+    background: linear-gradient(to bottom, #f8f8f8, #e8e8e8);
+    border: 1px solid #999;
+    border-radius: 0 0 5px 5px;
+    cursor: pointer;
+    position: relative;
+    z-index: 1;
+    transition: background 0.1s;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    padding-bottom: 8px;
+}
+
+.white-key:hover {
+    background: linear-gradient(to bottom, #fff, #f0f0f0);
+}
+
+.white-key:active, .white-key.pressed {
+    background: linear-gradient(to bottom, #ddd, #ccc);
+}
+
+.white-key.correct {
+    background: linear-gradient(to bottom, #4ade80, #22c55e) !important;
+}
+
+.white-key.wrong {
+    background: linear-gradient(to bottom, #f87171, #ef4444) !important;
+}
+
+.black-key {
+    width: 30px;
+    height: 110px;
+    background: linear-gradient(to bottom, #333, #111);
+    border-radius: 0 0 4px 4px;
+    cursor: pointer;
+    position: absolute;
+    z-index: 2;
+    transition: background 0.1s;
+}
+
+.black-key:hover {
+    background: linear-gradient(to bottom, #444, #222);
+}
+
+.black-key:active, .black-key.pressed {
+    background: linear-gradient(to bottom, #222, #000);
+    height: 105px;
+}
+
+.black-key.correct {
+    background: linear-gradient(to bottom, #22c55e, #16a34a) !important;
+}
+
+.black-key.wrong {
+    background: linear-gradient(to bottom, #ef4444, #dc2626) !important;
+}
+
+.key-label {
+    font-size: 11px;
+    color: #666;
+    user-select: none;
+}
+
+.black-key .key-label {
+    color: #888;
+    position: absolute;
+    bottom: 5px;
+    width: 100%;
+    text-align: center;
+}
+
+/* Keyboard Hints */
+#keyboard-hints {
+    text-align: center;
+    font-size: 12px;
+    color: #666;
+    padding: 8px;
+}
+
+/* Responsive */
+@media (max-width: 800px) {
+    .white-key {
+        width: 40px;
+        height: 150px;
+    }
+
+    .black-key {
+        width: 25px;
+        height: 90px;
+    }
+
+    #settings-panel {
+        justify-content: center;
+    }
+}
