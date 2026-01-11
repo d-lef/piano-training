@@ -11,6 +11,7 @@ const Storage = (function() {
                 rangeMin: 'C4',
                 rangeMax: 'B5',
                 showNoteNames: false,
+                showKeyboardLabels: false,
                 includeAccidentals: false,
                 soundEnabled: true,
                 darkMode: true

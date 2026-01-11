@@ -23,6 +23,7 @@ const App = (function() {
     const rangeMinSelect = document.getElementById('range-min');
     const rangeMaxSelect = document.getElementById('range-max');
     const showNoteNamesCheckbox = document.getElementById('show-note-names');
+    const keyboardLabelsToggle = document.getElementById('keyboard-labels-toggle');
     const accidentalsToggle = document.getElementById('accidentals-toggle');
     const soundToggle = document.getElementById('sound-toggle');
     const themeToggle = document.getElementById('theme-toggle');
@@ -43,7 +44,7 @@ const App = (function() {
 
         // Apply initial keyboard labels visibility
         const settings = Storage.getSettings();
-        Keyboard.setLabelsVisible(settings.showNoteNames);
+        Keyboard.setLabelsVisible(settings.showKeyboardLabels);
 
         // Apply initial theme
         applyTheme(settings.darkMode !== false);
@@ -62,6 +63,7 @@ const App = (function() {
         const settings = Storage.getSettings();
         clefSelect.value = settings.clef;
         showNoteNamesCheckbox.checked = settings.showNoteNames;
+        keyboardLabelsToggle.checked = settings.showKeyboardLabels;
         accidentalsToggle.checked = settings.includeAccidentals;
         soundToggle.checked = settings.soundEnabled;
         themeToggle.checked = settings.darkMode !== false;
@@ -95,6 +97,7 @@ const App = (function() {
         rangeMinSelect.addEventListener('change', onSettingsChange);
         rangeMaxSelect.addEventListener('change', onSettingsChange);
         showNoteNamesCheckbox.addEventListener('change', onSettingsChange);
+        keyboardLabelsToggle.addEventListener('change', onSettingsChange);
         accidentalsToggle.addEventListener('change', onSettingsChange);
         soundToggle.addEventListener('change', onSettingsChange);
         themeToggle.addEventListener('change', onSettingsChange);
@@ -108,6 +111,7 @@ const App = (function() {
             rangeMin: rangeMinSelect.value,
             rangeMax: rangeMaxSelect.value,
             showNoteNames: showNoteNamesCheckbox.checked,
+            showKeyboardLabels: keyboardLabelsToggle.checked,
             includeAccidentals: accidentalsToggle.checked,
             soundEnabled: soundToggle.checked,
             darkMode: themeToggle.checked
@@ -124,7 +128,7 @@ const App = (function() {
         }
 
         // Update keyboard labels
-        Keyboard.setLabelsVisible(settings.showNoteNames);
+        Keyboard.setLabelsVisible(settings.showKeyboardLabels);
 
         // Update theme
         applyTheme(settings.darkMode);
@@ -336,32 +340,37 @@ const App = (function() {
         }
     }
 
+    // Play a buffer immediately (no async)
+    function playBuffer(buffer) {
+        const source = audioContext.createBufferSource();
+        const gainNode = audioContext.createGain();
+
+        source.buffer = buffer;
+        gainNode.gain.value = 0.7;
+
+        source.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        source.start(0);
+    }
+
     // Play piano sound using samples
-    async function playSound(midiNote) {
+    function playSound(midiNote) {
         if (!soundToggle.checked) return;
+        if (!audioContext) return;
 
         try {
-            if (!audioContext) {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            }
+            // Check cache first for instant playback
+            const sampleName = midiToSampleName(midiNote);
+            const cachedBuffer = pianoSamples[sampleName];
 
-            // Resume if suspended (browser autoplay policy)
-            if (audioContext.state === 'suspended') {
-                await audioContext.resume();
-            }
-
-            // Load and play the sample
-            const buffer = await loadSample(midiNote);
-            if (buffer) {
-                const source = audioContext.createBufferSource();
-                const gainNode = audioContext.createGain();
-
-                source.buffer = buffer;
-                gainNode.gain.value = 0.7;
-
-                source.connect(gainNode);
-                gainNode.connect(audioContext.destination);
-                source.start(0);
+            if (cachedBuffer) {
+                // Play immediately from cache
+                playBuffer(cachedBuffer);
+            } else {
+                // Load and play (will have delay, but only for uncached notes)
+                loadSample(midiNote).then(buffer => {
+                    if (buffer) playBuffer(buffer);
+                });
             }
         } catch (e) {
             console.log('Audio not available:', e);
