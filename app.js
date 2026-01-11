@@ -70,11 +70,8 @@ const App = (function() {
         const startBtn = document.getElementById('start-btn');
         startBtn.addEventListener('click', startGame);
 
-        // Setup pause/continue buttons
-        const pauseBtn = document.getElementById('pause-btn');
-        const continueBtn = document.getElementById('continue-btn');
-        pauseBtn.addEventListener('click', pauseGame);
-        continueBtn.addEventListener('click', continueGame);
+        // Setup pause/continue toggle button
+        document.getElementById('pause-toggle-btn').addEventListener('click', togglePause);
 
         // Setup clear stats button
         document.getElementById('clear-stats-btn').addEventListener('click', clearStatistics);
@@ -88,38 +85,34 @@ const App = (function() {
     function startGame() {
         const overlay = document.getElementById('start-overlay');
         overlay.classList.add('hidden');
-        document.getElementById('pause-btn').classList.remove('hidden');
+        const toggleBtn = document.getElementById('pause-toggle-btn');
+        toggleBtn.classList.remove('hidden', 'paused');
+        toggleBtn.textContent = '⏸';
         isPaused = false;
         pausedElapsed = 0;
         nextNote();
     }
 
-    function pauseGame() {
-        if (isPaused) return;
-        isPaused = true;
-        isWaitingForInput = false;
+    function togglePause() {
+        const toggleBtn = document.getElementById('pause-toggle-btn');
 
-        // Save elapsed time
-        pausedElapsed = Date.now() - noteStartTime;
-        stopTimer();
-
-        // Show pause overlay
-        document.getElementById('pause-overlay').classList.remove('hidden');
-        document.getElementById('pause-btn').classList.add('hidden');
-    }
-
-    function continueGame() {
-        if (!isPaused) return;
-        isPaused = false;
-
-        // Restore timer from where we left off
-        noteStartTime = Date.now() - pausedElapsed;
-        isWaitingForInput = true;
-        startTimer();
-
-        // Hide pause overlay
-        document.getElementById('pause-overlay').classList.add('hidden');
-        document.getElementById('pause-btn').classList.remove('hidden');
+        if (isPaused) {
+            // Continue
+            isPaused = false;
+            noteStartTime = Date.now() - pausedElapsed;
+            isWaitingForInput = true;
+            startTimer();
+            toggleBtn.classList.remove('paused');
+            toggleBtn.textContent = '⏸';
+        } else {
+            // Pause
+            isPaused = true;
+            isWaitingForInput = false;
+            pausedElapsed = Date.now() - noteStartTime;
+            stopTimer();
+            toggleBtn.classList.add('paused');
+            toggleBtn.textContent = '▶';
+        }
     }
 
     function loadSettings() {
@@ -281,13 +274,12 @@ const App = (function() {
         isPaused = false;
         pausedElapsed = 0;
 
-        // Show start overlay, hide pause elements, stop timer
+        // Show start overlay, hide pause button, stop timer
         stopTimer();
         const timerEl = document.getElementById('timer');
         timerEl.textContent = '0.0s';
         document.getElementById('start-overlay').classList.remove('hidden');
-        document.getElementById('pause-overlay').classList.add('hidden');
-        document.getElementById('pause-btn').classList.add('hidden');
+        document.getElementById('pause-toggle-btn').classList.add('hidden');
         isWaitingForInput = false;
     }
 

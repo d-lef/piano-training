@@ -286,57 +286,46 @@ button:hover {
     border-radius: 8px;
 }
 
-#start-overlay.hidden,
-#pause-overlay.hidden {
+#start-overlay.hidden {
     display: none;
 }
 
-#pause-overlay {
+#pause-toggle-btn {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(255, 255, 255, 0.95);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 10;
-    border-radius: 8px;
-}
-
-#continue-btn {
-    font-size: 24px;
-    padding: 15px 50px;
-    background: #60a5fa;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-#continue-btn:hover {
-    background: #3b82f6;
-}
-
-#pause-btn {
-    font-size: 16px;
-    padding: 4px 10px;
-    background: transparent;
+    top: 8px;
+    right: 8px;
+    font-size: 18px;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    background: rgba(255, 255, 255, 0.9);
     color: #666;
     border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: 50%;
     cursor: pointer;
     transition: all 0.2s;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-#pause-btn:hover {
+#pause-toggle-btn:hover {
     background: #f0f0f0;
     border-color: #999;
 }
 
-#pause-btn.hidden {
+#pause-toggle-btn.paused {
+    background: #60a5fa;
+    color: white;
+    border-color: #3b82f6;
+}
+
+#pause-toggle-btn.paused:hover {
+    background: #3b82f6;
+}
+
+#pause-toggle-btn.hidden {
     display: none;
 }
 
