@@ -28,11 +28,19 @@
             background: #f5f5f5;
             color: #333;
         }
-        body.light-theme .back-btn {
+        body.light-theme #back-btn {
             background: transparent;
             color: #666;
         }
-        body.light-theme .back-btn:hover {
+        body.light-theme #back-btn:hover {
+            background: rgba(0, 0, 0, 0.08);
+            color: #333;
+        }
+        body.light-theme #theme-btn {
+            background: transparent;
+            color: #666;
+        }
+        body.light-theme #theme-btn:hover {
             background: rgba(0, 0, 0, 0.08);
             color: #333;
         }
@@ -69,38 +77,70 @@
             max-width: 800px;
             margin: 0 auto;
         }
-        /* Back Button Style (matches main page icon buttons) */
-        .back-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 20px;
+        /* Fixed Header Buttons (same as main page) */
+        #back-btn {
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            width: 36px;
+            height: 36px;
             background: transparent;
             color: #B0B0B0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
             text-decoration: none;
-            border-radius: 8px;
-            font-size: 16px;
-            margin-bottom: 20px;
+            z-index: 100;
             transition: all 0.15s;
         }
-        .back-btn:hover {
+        #back-btn:hover {
             background: #3A3A3A;
             color: #FFFFFF;
         }
-        /* Coffee Button Style (matches main page) */
-        .coffee-btn {
-            display: inline-block;
-            padding: 10px 20px;
+        #coffee-btn {
+            position: fixed;
+            top: 15px;
+            left: 60px;
+            width: 36px;
+            height: 36px;
             background: #ffdd00;
             color: #000;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
             text-decoration: none;
-            border-radius: 8px;
-            font-weight: bold;
+            z-index: 100;
             transition: all 0.15s;
         }
-        .coffee-btn:hover {
+        #coffee-btn:hover {
             background: #ffeb55;
-            transform: scale(1.05);
+            transform: scale(1.1);
+        }
+        #theme-btn {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            width: 36px;
+            height: 36px;
+            background: transparent;
+            color: #B0B0B0;
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            cursor: pointer;
+            z-index: 100;
+            transition: all 0.15s;
+        }
+        #theme-btn:hover {
+            background: #3A3A3A;
+            color: #FFFFFF;
         }
         h1 {
             font-size: 32px;
@@ -193,18 +233,17 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <a href="index.html" class="back-btn">← Back to Training</a>
+    <a href="index.html" id="back-btn" title="Back to Training">←</a>
+    <a href="https://buymeacoffee.com/daniel_l" target="_blank" id="coffee-btn" title="Buy me a coffee">☕</a>
+    <button id="theme-btn" title="Toggle dark/light theme">☾</button>
 
+    <div class="container">
         <h1>Piano Note Trainer</h1>
         <p class="subtitle">Learn to read music notes on the staff</p>
 
         <h2>About Me</h2>
         <p>
             Developed by <a href="https://www.linkedin.com/in/daniel-lefanov/" target="_blank" style="color: #E0E0E0;">Daniel Lefanov</a>
-        </p>
-        <p style="margin-top: 15px;">
-            <a href="https://buymeacoffee.com/daniel_l" target="_blank" class="coffee-btn">☕ Buy me a coffee</a>
         </p>
 
         <h2>Features</h2>
@@ -293,18 +332,36 @@
             <strong>Portable:</strong> Copy this entire folder to any computer - it will work the same way.
             Settings and statistics are stored in your browser and won't transfer.
         </div>
-
-        <br><br>
-        <a href="index.html" class="back-btn">← Back to Training</a>
     </div>
     <script>
-        // Apply theme from settings
+        // Apply theme from settings and setup toggle
+        const themeBtn = document.getElementById('theme-btn');
+
+        function applyTheme(isDark) {
+            document.body.classList.toggle('light-theme', !isDark);
+            themeBtn.textContent = isDark ? '☾' : '☀';
+        }
+
+        function toggleTheme() {
+            try {
+                const data = JSON.parse(localStorage.getItem('piano_trainer_data')) || {};
+                const settings = data.settings || {};
+                const newDarkMode = !(settings.darkMode !== false);
+                settings.darkMode = newDarkMode;
+                data.settings = settings;
+                localStorage.setItem('piano_trainer_data', JSON.stringify(data));
+                applyTheme(newDarkMode);
+            } catch (e) {}
+        }
+
+        // Initial theme
         try {
             const data = JSON.parse(localStorage.getItem('piano_trainer_data'));
-            if (data && data.settings && data.settings.darkMode === false) {
-                document.body.classList.add('light-theme');
-            }
+            const isDark = !(data && data.settings && data.settings.darkMode === false);
+            applyTheme(isDark);
         } catch (e) {}
+
+        themeBtn.addEventListener('click', toggleTheme);
     </script>
 </body>
 </html>
