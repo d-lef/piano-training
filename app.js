@@ -244,7 +244,11 @@ const App = (function() {
 
     // Simple sound using Web Audio API
     async function playSound(midiNote) {
-        if (!soundToggle.checked) return;
+        console.log('playSound called, midiNote:', midiNote, 'soundToggle.checked:', soundToggle.checked);
+        if (!soundToggle.checked) {
+            console.log('Sound disabled, returning');
+            return;
+        }
 
         try {
             if (!audioContext) {
@@ -273,8 +277,9 @@ const App = (function() {
 
             oscillator.start(audioContext.currentTime);
             oscillator.stop(audioContext.currentTime + 0.5);
+            console.log('Sound playing at frequency:', frequency, 'Hz');
         } catch (e) {
-            console.log('Audio not available:', e);
+            console.error('Audio error:', e);
         }
     }
 
