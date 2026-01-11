@@ -7,8 +7,8 @@ const Staff = (function() {
     let context = null;
     const containerElement = document.getElementById('staff');
 
-    const STAFF_WIDTH = 200;
-    const STAFF_HEIGHT = 150;
+    const STAFF_WIDTH = 240;
+    const STAFF_HEIGHT = 180;
 
     function init() {
         // Clear any existing content

@@ -108,7 +108,7 @@ const App = (function() {
         overlay.classList.add('hidden');
         const toggleBtn = document.getElementById('pause-toggle-btn');
         toggleBtn.classList.remove('hidden', 'paused');
-        toggleBtn.textContent = '⏸';
+        toggleBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2s2-.9 2-2V7c0-1.1-.9-2-2-2zm8 0c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2s2-.9 2-2V7c0-1.1-.9-2-2-2z"/></svg>';
         isPaused = false;
         pausedElapsed = 0;
         nextNote();
@@ -124,7 +124,7 @@ const App = (function() {
             isWaitingForInput = true;
             startTimer();
             toggleBtn.classList.remove('paused');
-            toggleBtn.textContent = '⏸';
+            toggleBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2s2-.9 2-2V7c0-1.1-.9-2-2-2zm8 0c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2s2-.9 2-2V7c0-1.1-.9-2-2-2z"/></svg>';
         } else {
             // Pause
             isPaused = true;
@@ -132,7 +132,7 @@ const App = (function() {
             pausedElapsed = Date.now() - noteStartTime;
             stopTimer();
             toggleBtn.classList.add('paused');
-            toggleBtn.textContent = '▶';
+            toggleBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 6.82v10.36c0 .79.87 1.27 1.54.84l8.14-5.18c.62-.39.62-1.29 0-1.69L9.54 5.98C8.87 5.55 8 6.03 8 6.82z"/></svg>';
         }
     }
 

@@ -123,7 +123,7 @@ body {
 
 /* Small Button Style (matches mono smallButton) */
 #clear-stats-btn {
-    font-size: 12px;
+    font-size: 14px;
     padding: 6px 10px;
     background: transparent;
     color: #B0B0B0;
@@ -333,7 +333,7 @@ button:active {
 /* General Button Style applied to New Session */
 #new-session-btn {
     padding: 6px 12px;
-    font-size: 12px;
+    font-size: 14px;
     background: transparent;
     color: #B0B0B0;
 }
@@ -349,10 +349,21 @@ button:active {
     flex-direction: column;
     align-items: center;
     padding: 20px;
-    background: #fff;
+    background: transparent;
     border-radius: 8px;
     min-height: 180px;
     position: relative;
+}
+
+/* VexFlow SVG theming - dark theme (white notes) */
+#staff svg path,
+#staff svg rect {
+    stroke: #FFFFFF;
+    fill: #FFFFFF;
+}
+
+#staff svg text {
+    fill: #FFFFFF;
 }
 
 #staff-footer {
@@ -367,7 +378,7 @@ button:active {
 #timer {
     font-size: 20px;
     font-weight: bold;
-    color: #666;
+    color: #B0B0B0;
 }
 
 #start-overlay {
@@ -376,7 +387,7 @@ button:active {
     left: 0;
     right: 0;
     bottom: 0;
-    background: #fff;
+    background: transparent;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -393,12 +404,11 @@ button:active {
     position: absolute;
     top: 8px;
     right: 8px;
-    font-size: 18px;
     width: 36px;
     height: 36px;
     padding: 0;
     background: transparent;
-    color: #666;
+    color: #FFFFFF;
     border: none;
     border-radius: 50%;
     cursor: pointer;
@@ -409,42 +419,51 @@ button:active {
     justify-content: center;
 }
 
+#pause-toggle-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
 #pause-toggle-btn:hover {
-    background: rgba(0, 0, 0, 0.1);
-    color: #333;
-}
-
-#pause-toggle-btn.paused {
     background: #3A3A3A;
-    color: white;
 }
 
-#pause-toggle-btn.paused:hover {
-    background: #4A4A4A;
+#pause-toggle-btn:active {
+    background: #454545;
 }
 
 #pause-toggle-btn.hidden {
     display: none;
 }
 
-/* Primary Button Style (matches mono generalButton.primary) */
+/* Play Button (follows mono smallButton style) */
 #start-btn {
-    font-size: 24px;
-    padding: 15px 50px;
-    background: #E0E0E0;
-    color: #1E1E1E;
+    width: 80px;
+    height: 80px;
+    padding: 0;
+    background: transparent;
+    color: #FFFFFF;
     border: none;
-    border-radius: 8px;
+    border-radius: 50%;
     cursor: pointer;
-    transition: background 0.15s;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#start-btn svg {
+    width: 40px;
+    height: 40px;
+    margin-left: 3px;
 }
 
 #start-btn:hover {
-    background: #F0F0F0;
+    background: #3A3A3A;
 }
 
 #start-btn:active {
-    background: #C0C0C0;
+    background: #454545;
 }
 
 #staff {
@@ -456,7 +475,7 @@ button:active {
 #note-label {
     font-size: 24px;
     font-weight: bold;
-    color: #333;
+    color: #FFFFFF;
     visibility: hidden;
 }
 
@@ -632,18 +651,18 @@ body.light-theme button:hover {
     background: rgba(0, 0, 0, 0.08);
 }
 
-/* Light theme primary button (Start) */
+/* Light theme play button (Start) */
 body.light-theme #start-btn {
-    background: #505050;
-    color: #FFFFFF;
+    background: transparent;
+    color: #333;
 }
 
 body.light-theme #start-btn:hover {
-    background: #606060;
+    background: rgba(0, 0, 0, 0.08);
 }
 
 body.light-theme #start-btn:active {
-    background: #404040;
+    background: rgba(0, 0, 0, 0.12);
 }
 
 body.light-theme .score-item .label {
@@ -726,4 +745,31 @@ body.light-theme .miss-count,
 body.light-theme .time-badge {
     background: #888;
     color: #fff;
+}
+
+/* Light theme VexFlow SVG (black notes) */
+body.light-theme #staff svg path,
+body.light-theme #staff svg rect {
+    stroke: #333;
+    fill: #333;
+}
+
+body.light-theme #staff svg text {
+    fill: #333;
+}
+
+body.light-theme #note-label {
+    color: #333;
+}
+
+body.light-theme #timer {
+    color: #666;
+}
+
+body.light-theme #pause-toggle-btn {
+    color: #333;
+}
+
+body.light-theme #pause-toggle-btn:hover {
+    background: rgba(0, 0, 0, 0.08);
 }
