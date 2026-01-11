@@ -41,7 +41,7 @@ const App = (function() {
         document.body.classList.toggle('light-theme', !isDark);
         // Update theme button icon (monochrome symbols)
         if (themeBtn) {
-            themeBtn.textContent = isDark ? '☾' : '☀';
+            themeBtn.textContent = isDark ? '☾' : '☼';
         }
     }
 

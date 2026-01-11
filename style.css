@@ -271,6 +271,8 @@ body.light-theme .modal-action-btn:hover {
     cursor: pointer;
     z-index: 100;
     transition: all 0.15s;
+    font-family: 'Segoe UI Symbol', 'Arial', sans-serif;
+    -webkit-text-fill-color: currentColor;
 }
 
 #theme-btn:hover {
@@ -971,10 +973,10 @@ button:active {
 }
 
 .rotate-icon {
-    width: 80px;
-    height: 80px;
+    font-size: 64px;
     color: #B0B0B0;
     flex-shrink: 0;
+    line-height: 1;
 }
 
 .rotate-text {
@@ -1014,7 +1016,7 @@ button:active {
     }
 
     #app {
-        padding: 2px 10px;
+        padding: 0 10px;
         gap: 0;
         max-width: 100vw;
         height: 100vh;
@@ -1022,7 +1024,7 @@ button:active {
         max-height: 100vh;
         max-height: 100dvh;
         overflow: hidden;
-        justify-content: flex-start;
+        justify-content: flex-end;
     }
 
     /* Hide side panels, settings panel, and score strip in mobile landscape */
@@ -1077,12 +1079,13 @@ button:active {
 
     #staff-container {
         padding: 0;
-        min-height: 0;
         flex: 1 1 auto;
         overflow: visible;
         display: flex;
         flex-direction: column;
-        justify-content: center;
+        justify-content: flex-end;
+        align-items: center;
+        padding-bottom: 5px;
     }
 
     #staff-footer {
@@ -1090,7 +1093,7 @@ button:active {
     }
 
     #keyboard-container {
-        padding: 2px 0 0 0;
+        padding: 0;
         overflow: hidden;
         flex: 0 0 auto;
         display: flex;
@@ -1098,7 +1101,7 @@ button:active {
     }
 
     #keyboard {
-        height: 90px;
+        height: 80px;
     }
 
     /* Size keys to fit: 21 white keys must fit viewport */
