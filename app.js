@@ -228,8 +228,22 @@ const App = (function() {
         feedbackEl.className = 'hidden';
     }
 
+    // Initialize audio context on first user interaction
+    function initAudio() {
+        if (!audioContext) {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioContext.state === 'suspended') {
+            audioContext.resume();
+        }
+    }
+
+    // Listen for any click to init audio early
+    document.addEventListener('click', initAudio, { once: true });
+    document.addEventListener('keydown', initAudio, { once: true });
+
     // Simple sound using Web Audio API
-    function playSound(midiNote) {
+    async function playSound(midiNote) {
         if (!soundToggle.checked) return;
 
         try {
@@ -239,7 +253,7 @@ const App = (function() {
 
             // Resume if suspended (browser autoplay policy)
             if (audioContext.state === 'suspended') {
-                audioContext.resume();
+                await audioContext.resume();
             }
 
             // Convert MIDI to frequency
