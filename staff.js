@@ -13,7 +13,7 @@ const Staff = (function() {
         const isMobileLandscape = isLandscape && window.innerHeight <= 700;
 
         if (isMobileLandscape) {
-            return { width: 160, height: 110 };
+            return { width: 140, height: 95 };
         } else if (window.innerWidth <= 400) {
             return { width: 160, height: 120 };
         } else if (window.innerWidth <= 600) {
@@ -70,7 +70,7 @@ const Staff = (function() {
         const dims = getStaffDimensions();
 
         // Adjust stave y position for smaller displays
-        const staveY = dims.height <= 110 ? 25 : 30;
+        const staveY = dims.height <= 95 ? 18 : 30;
 
         // Create stave
         const stave = new Stave(10, staveY, dims.width - 20);
