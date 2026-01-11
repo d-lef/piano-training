@@ -23,8 +23,9 @@ const Keyboard = (function() {
         '2': 5, '3': 6, '5': 7, '6': 8, '7': 9,  // Next octave sharps
     };
 
-    // Note callback
+    // Callbacks
     let onNotePressed = null;
+    let onPlaySound = null;
 
     // All key elements
     const keyElements = {};
@@ -40,8 +41,9 @@ const Keyboard = (function() {
         { note: 'A#', afterWhite: 5 }
     ];
 
-    function init(callback) {
-        onNotePressed = callback;
+    function init(noteCallback, soundCallback) {
+        onNotePressed = noteCallback;
+        onPlaySound = soundCallback;
         render();
         setupKeyboardListeners();
     }
@@ -163,6 +165,12 @@ const Keyboard = (function() {
     }
 
     function handleKeyPress(noteName) {
+        // Play sound FIRST for instant feedback
+        if (onPlaySound) {
+            const midi = keyElements[noteName]?.dataset.midi;
+            if (midi) onPlaySound(parseInt(midi));
+        }
+        // Then notify game logic
         if (onNotePressed) {
             onNotePressed(noteName);
         }

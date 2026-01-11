@@ -63,43 +63,56 @@
             <button id="new-session-btn">New Session</button>
         </div>
 
-        <!-- Score Strip -->
-        <div id="score-strip">
-            <div class="score-item">
-                <span class="label">Correct:</span>
-                <span id="correct-count">0</span>
+        <!-- Main Layout with Side Panel -->
+        <div id="main-layout">
+            <!-- Mistakes Panel (Left) -->
+            <div id="misses-panel">
+                <div class="panel-title">Mistakes</div>
+                <div class="panel-empty">None yet</div>
             </div>
-            <div class="score-item">
-                <span class="label">Wrong:</span>
-                <span id="wrong-count">0</span>
+
+            <!-- Center Content -->
+            <div id="center-content">
+                <!-- Score Strip -->
+                <div id="score-strip">
+                    <div class="score-item">
+                        <span class="label">Correct:</span>
+                        <span id="correct-count">0</span>
+                    </div>
+                    <div class="score-item">
+                        <span class="label">Wrong:</span>
+                        <span id="wrong-count">0</span>
+                    </div>
+                    <div class="score-item">
+                        <span class="label">Accuracy:</span>
+                        <span id="accuracy">--%</span>
+                    </div>
+                    <div class="score-item">
+                        <span class="label">Streak:</span>
+                        <span id="streak">0</span>
+                    </div>
+                </div>
+
+                <!-- Staff Display -->
+                <div id="staff-container">
+                    <div id="staff"></div>
+                    <div id="note-label"></div>
+                    <div id="timer">0.0s</div>
+                </div>
+
+                <!-- Feedback Overlay -->
+                <div id="feedback" class="hidden"></div>
+
+                <!-- Piano Keyboard -->
+                <div id="keyboard-container">
+                    <div id="keyboard"></div>
+                </div>
+
+                <!-- Keyboard Hints -->
+                <div id="keyboard-hints">
+                    <span>PC Keyboard: Z X C V B N M = white keys (C D E F G A B) | S D G H J = black keys | Arrow Up/Down = octave</span>
+                </div>
             </div>
-            <div class="score-item">
-                <span class="label">Accuracy:</span>
-                <span id="accuracy">--%</span>
-            </div>
-            <div class="score-item">
-                <span class="label">Streak:</span>
-                <span id="streak">0</span>
-            </div>
-        </div>
-
-        <!-- Staff Display -->
-        <div id="staff-container">
-            <div id="staff"></div>
-            <div id="note-label"></div>
-        </div>
-
-        <!-- Feedback Overlay -->
-        <div id="feedback" class="hidden"></div>
-
-        <!-- Piano Keyboard -->
-        <div id="keyboard-container">
-            <div id="keyboard"></div>
-        </div>
-
-        <!-- Keyboard Hints -->
-        <div id="keyboard-hints">
-            <span>PC Keyboard: Z X C V B N M = white keys (C D E F G A B) | S D G H J = black keys | Arrow Up/Down = octave</span>
         </div>
     </div>
 

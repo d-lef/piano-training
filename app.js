@@ -7,8 +7,10 @@ const App = (function() {
     let correctCount = 0;
     let wrongCount = 0;
     let isWaitingForInput = false;
+    let sessionMisses = {};  // Track misses per note this session
     let availableNotes = [];
     let audioContext = null;
+    let timerInterval = null;
 
     // DOM elements
     const correctCountEl = document.getElementById('correct-count');
@@ -39,8 +41,14 @@ const App = (function() {
         populateRangeSelectors();
         setupEventListeners();
 
-        // Initialize keyboard with note callback
-        Keyboard.init(handleNotePressed);
+        // Load persisted session counts
+        const session = Storage.getCurrentSession();
+        correctCount = session.correct;
+        wrongCount = session.wrong;
+        sessionMisses = session.misses || {};
+
+        // Initialize keyboard with note callback and sound callback
+        Keyboard.init(handleNotePressed, playSound);
 
         // Apply initial keyboard labels visibility
         const settings = Storage.getSettings();
@@ -55,8 +63,9 @@ const App = (function() {
         // Start first note
         nextNote();
 
-        // Update streak display
+        // Update displays
         updateScoreDisplay();
+        updateMissesPanel();
     }
 
     function loadSettings() {
@@ -146,8 +155,11 @@ const App = (function() {
     function startNewSession() {
         correctCount = 0;
         wrongCount = 0;
+        sessionMisses = {};
         Storage.resetStreak();
+        Storage.resetCurrentSession();
         updateScoreDisplay();
+        updateMissesPanel();
         nextNote();
     }
 
@@ -191,8 +203,29 @@ const App = (function() {
         noteStartTime = Date.now();
         isWaitingForInput = true;
 
+        // Start timer display
+        startTimer();
+
         // Clear keyboard highlights
         Keyboard.clearHighlights();
+    }
+
+    function startTimer() {
+        const timerEl = document.getElementById('timer');
+        if (timerInterval) clearInterval(timerInterval);
+        timerEl.textContent = '0.0s';
+
+        timerInterval = setInterval(() => {
+            const elapsed = (Date.now() - noteStartTime) / 1000;
+            timerEl.textContent = elapsed.toFixed(1) + 's';
+        }, 100);
+    }
+
+    function stopTimer() {
+        if (timerInterval) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+        }
     }
 
     function handleNotePressed(noteName) {
@@ -210,14 +243,12 @@ const App = (function() {
 
         const isCorrect = pressedMidi === correctMidi;
 
-        // Play sound for every key press
-        playSound(pressedMidi);
-
         // Record attempt
         Storage.recordAttempt(currentNote.fullName, isCorrect, responseTime);
 
         if (isCorrect) {
             correctCount++;
+            stopTimer();  // Stop timer on correct
             Keyboard.showCorrect(noteName);
             showFeedback('correct');
 
@@ -228,6 +259,9 @@ const App = (function() {
             }, 400);
         } else {
             wrongCount++;
+            // Track miss for this note
+            sessionMisses[currentNote.fullName] = (sessionMisses[currentNote.fullName] || 0) + 1;
+
             Keyboard.showWrong(noteName);
             showFeedback('wrong');
 
@@ -239,7 +273,10 @@ const App = (function() {
             }, 400);
         }
 
+        // Save session and update displays
+        Storage.updateCurrentSession(correctCount, wrongCount, sessionMisses);
         updateScoreDisplay();
+        updateMissesPanel();
     }
 
     function updateScoreDisplay() {
@@ -252,6 +289,28 @@ const App = (function() {
         accuracyEl.textContent = accuracy + '%';
 
         streakEl.textContent = stats.currentStreak;
+    }
+
+    function updateMissesPanel() {
+        const panel = document.getElementById('misses-panel');
+        if (!panel) return;
+
+        // Sort notes by miss count descending
+        const sorted = Object.entries(sessionMisses)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 10);  // Top 10
+
+        if (sorted.length === 0) {
+            panel.innerHTML = '<div class="panel-title">Mistakes</div><div class="panel-empty">None yet</div>';
+            return;
+        }
+
+        let html = '<div class="panel-title">Mistakes</div>';
+        for (const [note, count] of sorted) {
+            const russianName = Notes.getRussianName(note);
+            html += `<div class="miss-item"><span>${note} (${russianName})</span><span class="miss-count">${count}</span></div>`;
+        }
+        panel.innerHTML = html;
     }
 
     function showFeedback(type) {

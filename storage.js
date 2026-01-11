@@ -19,7 +19,8 @@ const Storage = (function() {
             noteStats: {},  // { "C4": { attempts: 0, misses: 0, totalTime: 0 } }
             sessions: [],   // [{ date, correct, wrong, duration }]
             currentStreak: 0,
-            bestStreak: 0
+            bestStreak: 0,
+            currentSession: { correct: 0, wrong: 0, misses: {} }
         };
     }
 
@@ -167,6 +168,23 @@ const Storage = (function() {
         save(currentData);
     }
 
+    // Get current session counts
+    function getCurrentSession() {
+        return currentData.currentSession || { correct: 0, wrong: 0, misses: {} };
+    }
+
+    // Update current session counts
+    function updateCurrentSession(correct, wrong, misses) {
+        currentData.currentSession = { correct, wrong, misses: misses || {} };
+        save(currentData);
+    }
+
+    // Reset current session
+    function resetCurrentSession() {
+        currentData.currentSession = { correct: 0, wrong: 0, misses: {} };
+        save(currentData);
+    }
+
     return {
         getSettings,
         saveSettings,
@@ -176,6 +194,9 @@ const Storage = (function() {
         saveSession,
         getStats,
         resetStreak,
-        clearAll
+        clearAll,
+        getCurrentSession,
+        updateCurrentSession,
+        resetCurrentSession
     };
 })();

@@ -16,11 +16,70 @@ body {
 
 #app {
     width: 100%;
-    max-width: 1150px;
+    max-width: 1300px;
     padding: 20px;
     display: flex;
     flex-direction: column;
     gap: 15px;
+}
+
+/* Main Layout */
+#main-layout {
+    display: flex;
+    gap: 15px;
+}
+
+#center-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Misses Panel */
+#misses-panel {
+    width: 150px;
+    background: #16213e;
+    border-radius: 8px;
+    padding: 12px;
+    flex-shrink: 0;
+}
+
+.panel-title {
+    font-size: 14px;
+    font-weight: bold;
+    color: #888;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.panel-empty {
+    font-size: 13px;
+    color: #555;
+    font-style: italic;
+}
+
+.miss-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+    font-size: 13px;
+    border-bottom: 1px solid #2a3a5e;
+}
+
+.miss-item:last-child {
+    border-bottom: none;
+}
+
+.miss-count {
+    background: #f87171;
+    color: #fff;
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: bold;
 }
 
 /* Settings Panel */
@@ -163,6 +222,13 @@ button:hover {
     border-radius: 8px;
     min-height: 180px;
     position: relative;
+}
+
+#timer {
+    font-size: 20px;
+    font-weight: bold;
+    color: #666;
+    margin-top: 5px;
 }
 
 #staff {
@@ -363,4 +429,12 @@ body.light-theme .score-item .label {
 
 body.light-theme #keyboard-hints {
     color: #666;
+}
+
+body.light-theme #misses-panel {
+    background: #e2e8f0;
+}
+
+body.light-theme .miss-item {
+    border-bottom-color: #cbd5e1;
 }
