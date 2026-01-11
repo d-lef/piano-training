@@ -19,6 +19,43 @@
             padding: 20px;
             line-height: 1.6;
         }
+        /* Light theme */
+        body.light-theme {
+            background: #f0f4f8;
+            color: #333;
+        }
+        body.light-theme .back-btn {
+            background: #e94560;
+        }
+        body.light-theme h1 {
+            color: #16a34a;
+        }
+        body.light-theme h2 {
+            color: #3b82f6;
+            border-bottom-color: #cbd5e1;
+        }
+        body.light-theme .option {
+            background: #e2e8f0;
+        }
+        body.light-theme .keyboard-row {
+            background: #e2e8f0;
+        }
+        body.light-theme .key {
+            background: #cbd5e1;
+        }
+        body.light-theme .tip {
+            background: #e2e8f0;
+        }
+        body.light-theme .note {
+            background: #dbeafe;
+        }
+        body.light-theme table th {
+            color: #3b82f6;
+        }
+        body.light-theme table td,
+        body.light-theme table th {
+            border-bottom-color: #cbd5e1;
+        }
         .container {
             max-width: 800px;
             margin: 0 auto;
@@ -233,5 +270,14 @@
         <br><br>
         <a href="index.html" class="back-btn">← Back to Training</a>
     </div>
+    <script>
+        // Apply theme from settings
+        try {
+            const data = JSON.parse(localStorage.getItem('piano_trainer_data'));
+            if (data && data.settings && data.settings.darkMode === false) {
+                document.body.classList.add('light-theme');
+            }
+        } catch (e) {}
+    </script>
 </body>
 </html>
