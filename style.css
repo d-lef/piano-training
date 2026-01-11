@@ -1150,15 +1150,17 @@ button:active {
     }
 
     #pause-toggle-btn {
-        width: 24px;
-        height: 24px;
-        top: 3px;
-        right: 3px;
+        position: fixed;
+        width: 36px;
+        height: 36px;
+        top: 96px;
+        left: 8px;
+        right: auto;
     }
 
     #pause-toggle-btn svg {
-        width: 14px;
-        height: 14px;
+        width: 20px;
+        height: 20px;
     }
 
     #timer {
