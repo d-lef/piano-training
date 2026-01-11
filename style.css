@@ -1022,32 +1022,31 @@ button:active {
         display: none;
     }
 
-    /* Show settings button on mobile */
+    /* Left side buttons (vertical): settings, stats */
     #settings-btn {
         display: flex;
-        top: 5px;
-        left: 63px;
-        width: 24px;
-        height: 24px;
+        top: 8px;
+        left: 8px;
+        width: 36px;
+        height: 36px;
     }
 
     #settings-btn svg {
-        width: 14px;
-        height: 14px;
+        width: 20px;
+        height: 20px;
     }
 
-    /* Show stats button on mobile */
     #stats-btn {
         display: flex;
-        top: 5px;
-        left: 92px;
-        width: 24px;
-        height: 24px;
+        top: 52px;
+        left: 8px;
+        width: 36px;
+        height: 36px;
     }
 
     #stats-btn svg {
-        width: 14px;
-        height: 14px;
+        width: 20px;
+        height: 20px;
     }
 
     #main-layout {
@@ -1107,26 +1106,27 @@ button:active {
         font-size: 7px;
     }
 
-    /* Compact other elements */
+    /* Right side buttons (vertical): help, coffee, theme */
     #help-btn,
     #coffee-btn,
     #theme-btn {
-        width: 24px;
-        height: 24px;
-        font-size: 12px;
-        top: 5px;
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+        left: auto;
+        right: 8px;
     }
 
     #help-btn {
-        left: 5px;
+        top: 8px;
     }
 
     #coffee-btn {
-        left: 34px;
+        top: 52px;
     }
 
     #theme-btn {
-        right: 5px;
+        top: 96px;
     }
 
     #keyboard-hints {
