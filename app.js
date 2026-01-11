@@ -216,12 +216,13 @@ const App = (function() {
         );
     }
 
-    // Smart repetition: weighted note selection based on mistakes and response time
-    function getSmartNote(candidates) {
+    // Smart repetition: weighted note selection based on mistakes, response time, and distance
+    function getSmartNote(candidates, previousNote) {
         const weights = [];
         const BASE_WEIGHT = 1;
         const MISS_WEIGHT = 3;      // Each miss adds this much weight
         const TIME_WEIGHT = 0.002;  // Per millisecond above 1 second
+        const DISTANCE_PENALTY = 0.7;  // Multiplier for adjacent notes (closer = lower)
 
         for (const note of candidates) {
             let weight = BASE_WEIGHT;
@@ -241,6 +242,20 @@ const App = (function() {
             } else {
                 // Notes never answered get a slight boost (need practice)
                 weight += 0.5;
+            }
+
+            // Apply distance penalty for notes close to previous note
+            if (previousNote) {
+                const distance = Math.abs(note.midiNumber - previousNote.midiNumber);
+                // Distance 0-2 semitones: heavy penalty
+                // Distance 3-4 semitones: medium penalty
+                // Distance 5+ semitones: no penalty
+                if (distance <= 2) {
+                    weight *= DISTANCE_PENALTY * DISTANCE_PENALTY;  // ~0.49x
+                } else if (distance <= 4) {
+                    weight *= DISTANCE_PENALTY;  // 0.7x
+                }
+                // 5+ semitones: no penalty (full weight)
             }
 
             weights.push({ note, weight });
@@ -309,7 +324,7 @@ const App = (function() {
         // Get random note using smart repetition or simple random
         const settings = Storage.getSettings();
         if (settings.smartRepetition) {
-            currentNote = getSmartNote(candidates);
+            currentNote = getSmartNote(candidates, previousNote);
         } else {
             // Simple random selection
             currentNote = candidates[Math.floor(Math.random() * candidates.length)];
