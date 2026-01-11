@@ -29,7 +29,12 @@
             color: #333;
         }
         body.light-theme .back-btn {
-            background: #505050;
+            background: transparent;
+            color: #666;
+        }
+        body.light-theme .back-btn:hover {
+            background: rgba(0, 0, 0, 0.08);
+            color: #333;
         }
         body.light-theme h1 {
             color: #333;
@@ -64,22 +69,25 @@
             max-width: 800px;
             margin: 0 auto;
         }
+        /* Back Button Style (matches main page icon buttons) */
         .back-btn {
             display: inline-flex;
             align-items: center;
             gap: 8px;
             padding: 10px 20px;
-            background: #505050;
-            color: #fff;
+            background: transparent;
+            color: #B0B0B0;
             text-decoration: none;
             border-radius: 8px;
             font-size: 16px;
             margin-bottom: 20px;
-            transition: background 0.2s;
+            transition: all 0.15s;
         }
         .back-btn:hover {
-            background: #606060;
+            background: #3A3A3A;
+            color: #FFFFFF;
         }
+        /* Coffee Button Style (matches main page) */
         .coffee-btn {
             display: inline-block;
             padding: 10px 20px;
@@ -88,10 +96,11 @@
             text-decoration: none;
             border-radius: 8px;
             font-weight: bold;
-            transition: background 0.2s;
+            transition: all 0.15s;
         }
         .coffee-btn:hover {
             background: #ffeb55;
+            transform: scale(1.05);
         }
         h1 {
             font-size: 32px;
