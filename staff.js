@@ -13,7 +13,8 @@ const Staff = (function() {
         const isMobileLandscape = isLandscape && window.innerHeight <= 700;
 
         if (isMobileLandscape) {
-            return { width: 140, height: 95 };
+            // VexFlow needs minimum space: ~30px above staff for clef, ~40px for staff lines, ~30px below for ledger lines
+            return { width: 120, height: 100, scale: 0.85 };
         } else if (window.innerWidth <= 400) {
             return { width: 160, height: 120 };
         } else if (window.innerWidth <= 600) {
@@ -29,8 +30,25 @@ const Staff = (function() {
         // Create SVG renderer with responsive dimensions
         const dims = getStaffDimensions();
         renderer = new Renderer(containerElement, Renderer.Backends.SVG);
-        renderer.resize(dims.width, dims.height);
+
+        // If scale is provided, render at larger internal size then scale down
+        const scale = dims.scale || 1;
+        const internalWidth = Math.round(dims.width / scale);
+        const internalHeight = Math.round(dims.height / scale);
+
+        renderer.resize(internalWidth, internalHeight);
         context = renderer.getContext();
+
+        // Apply scale transform and set the SVG to display at target size
+        if (scale !== 1) {
+            context.scale(scale, scale);
+            const svg = containerElement.querySelector('svg');
+            if (svg) {
+                svg.style.width = dims.width + 'px';
+                svg.style.height = dims.height + 'px';
+            }
+        }
+
         context.setFont('Arial', 10);
     }
 
@@ -69,11 +87,16 @@ const Staff = (function() {
         // Get responsive dimensions
         const dims = getStaffDimensions();
 
-        // Adjust stave y position for smaller displays
-        const staveY = dims.height <= 95 ? 18 : 30;
+        // Use internal (pre-scale) dimensions for stave positioning
+        const scale = dims.scale || 1;
+        const internalWidth = Math.round(dims.width / scale);
+        const internalHeight = Math.round(dims.height / scale);
 
-        // Create stave
-        const stave = new Stave(10, staveY, dims.width - 20);
+        // Adjust stave y position - need ~30px above for clef
+        const staveY = internalHeight <= 120 ? 28 : 30;
+
+        // Create stave using internal dimensions
+        const stave = new Stave(10, staveY, internalWidth - 20);
         stave.addClef(clef);
         stave.setContext(context).draw();
 
@@ -100,8 +123,8 @@ const Staff = (function() {
         const voice = new Voice({ num_beats: 4, beat_value: 4 });
         voice.addTickables([staveNote]);
 
-        // Format and draw
-        new Formatter().joinVoices([voice]).format([voice], dims.width - 80);
+        // Format and draw using internal dimensions
+        new Formatter().joinVoices([voice]).format([voice], internalWidth - 80);
         voice.draw(context, stave);
     }
 
