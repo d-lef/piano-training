@@ -44,6 +44,22 @@ body {
     flex-shrink: 0;
 }
 
+#clear-stats-btn {
+    font-size: 12px;
+    padding: 6px 10px;
+    background: #4a5568;
+    color: #aaa;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+#clear-stats-btn:hover {
+    background: #e94560;
+    color: #fff;
+}
+
 /* Misses Panel */
 #misses-panel,
 #slowest-panel {
@@ -543,4 +559,14 @@ body.light-theme #slowest-panel {
 
 body.light-theme .miss-item {
     border-bottom-color: #cbd5e1;
+}
+
+body.light-theme #clear-stats-btn {
+    background: #cbd5e1;
+    color: #666;
+}
+
+body.light-theme #clear-stats-btn:hover {
+    background: #e94560;
+    color: #fff;
 }

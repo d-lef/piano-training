@@ -181,9 +181,18 @@ const Storage = (function() {
         save(currentData);
     }
 
-    // Reset current session
+    // Reset current session (keeps misses and times for smart repetition)
     function resetCurrentSession() {
-        currentData.currentSession = { correct: 0, wrong: 0, misses: {}, times: {} };
+        currentData.currentSession.correct = 0;
+        currentData.currentSession.wrong = 0;
+        // Note: misses and times are preserved - use clearStatistics() to reset them
+        save(currentData);
+    }
+
+    // Clear statistics (misses and times) - resets smart repetition data
+    function clearStatistics() {
+        currentData.currentSession.misses = {};
+        currentData.currentSession.times = {};
         save(currentData);
     }
 
@@ -199,6 +208,7 @@ const Storage = (function() {
         clearAll,
         getCurrentSession,
         updateCurrentSession,
-        resetCurrentSession
+        resetCurrentSession,
+        clearStatistics
     };
 })();

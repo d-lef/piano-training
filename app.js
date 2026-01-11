@@ -76,6 +76,9 @@ const App = (function() {
         pauseBtn.addEventListener('click', pauseGame);
         continueBtn.addEventListener('click', continueGame);
 
+        // Setup clear stats button
+        document.getElementById('clear-stats-btn').addEventListener('click', clearStatistics);
+
         // Update displays (but don't start game yet)
         updateScoreDisplay();
         updateMissesPanel();
@@ -268,13 +271,11 @@ const App = (function() {
     function startNewSession() {
         correctCount = 0;
         wrongCount = 0;
-        sessionMisses = {};
-        sessionTimes = {};
+        // Note: sessionMisses and sessionTimes are preserved across sessions
+        // Use "Clear Stats" button to reset them
         Storage.resetStreak();
         Storage.resetCurrentSession();
         updateScoreDisplay();
-        updateMissesPanel();
-        updateSlowestPanel();
 
         // Reset pause state
         isPaused = false;
@@ -288,6 +289,14 @@ const App = (function() {
         document.getElementById('pause-overlay').classList.add('hidden');
         document.getElementById('pause-btn').classList.add('hidden');
         isWaitingForInput = false;
+    }
+
+    function clearStatistics() {
+        sessionMisses = {};
+        sessionTimes = {};
+        Storage.clearStatistics();
+        updateMissesPanel();
+        updateSlowestPanel();
     }
 
     function nextNote() {
