@@ -994,12 +994,14 @@ button:active {
 }
 
 /* Mobile landscape - fit entire page to screen, no scrolling */
-/* Using 600px to account for browser address bar hiding/showing */
-@media (max-height: 600px) and (orientation: landscape) {
+/* Using 700px to account for various mobile devices and browser UI */
+@media (max-height: 700px) and (orientation: landscape) {
     html, body {
         overflow: hidden;
         height: 100vh;
+        height: 100dvh; /* Dynamic viewport height for mobile browsers */
         max-height: 100vh;
+        max-height: 100dvh;
     }
 
     body {
@@ -1011,7 +1013,9 @@ button:active {
         gap: 3px;
         max-width: 100vw;
         height: 100vh;
+        height: 100dvh;
         max-height: 100vh;
+        max-height: 100dvh;
         overflow: hidden;
         justify-content: space-between;
     }
@@ -1068,7 +1072,7 @@ button:active {
 
     #staff-container {
         padding: 3px;
-        min-height: 100px;
+        min-height: 0;
         flex: 1 1 auto;
         overflow: visible;
         display: flex;

@@ -10,7 +10,7 @@ const Staff = (function() {
     // Responsive staff dimensions
     function getStaffDimensions() {
         const isLandscape = window.innerWidth > window.innerHeight;
-        const isMobileLandscape = isLandscape && window.innerHeight <= 600;
+        const isMobileLandscape = isLandscape && window.innerHeight <= 700;
 
         if (isMobileLandscape) {
             return { width: 140, height: 90 };
