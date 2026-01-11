@@ -728,7 +728,8 @@ const App = (function() {
         let html = '<div class="panel-title">Mistakes</div>';
         for (const [note, count] of sorted) {
             const localName = Notes.getLocalizedName(note);
-            html += `<div class="miss-item"><span>${note} (${localName})</span><span class="miss-count">${count}</span></div>`;
+            const displayCount = Number.isInteger(count) ? count : count.toFixed(1);
+            html += `<div class="miss-item"><span>${note} (${localName})</span><span class="miss-count">${displayCount}</span></div>`;
         }
         panel.innerHTML = html;
     }
