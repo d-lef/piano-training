@@ -65,11 +65,11 @@ const Staff = (function() {
         voice.draw(context, stave);
     }
 
-    // Show note label below staff (Latin + Russian)
+    // Show note label below staff (Latin + localized name)
     function showNoteLabel(noteName) {
         const labelElement = document.getElementById('note-label');
-        const russianName = Notes.getRussianName(noteName);
-        labelElement.textContent = `${noteName} (${russianName})`;
+        const localName = Notes.getLocalizedName(noteName);
+        labelElement.textContent = `${noteName} (${localName})`;
         labelElement.classList.add('visible');
     }
 

@@ -67,11 +67,16 @@ const Keyboard = (function() {
                 key.dataset.note = fullName;
                 key.dataset.midi = Notes.getMidiNumber(noteName, octave);
 
-                // Add label (Latin + Russian)
+                // Add label (Latin + localized name if different)
                 const label = document.createElement('span');
                 label.className = 'key-label';
-                const russianName = Notes.getRussianName(fullName);
-                label.innerHTML = `${fullName}<br>${russianName}`;
+                const localName = Notes.getLocalizedName(fullName);
+                // Don't show duplicate if localized name matches base note
+                if (localName === noteName) {
+                    label.innerHTML = fullName;
+                } else {
+                    label.innerHTML = `${fullName}<br>${localName}`;
+                }
                 key.appendChild(label);
 
                 key.addEventListener('click', () => handleKeyPress(fullName));
@@ -217,6 +222,23 @@ const Keyboard = (function() {
         });
     }
 
+    // Update key labels with current naming style
+    function updateNamingStyle() {
+        Object.entries(keyElements).forEach(([noteName, key]) => {
+            const label = key.querySelector('.key-label');
+            if (label) {
+                const localName = Notes.getLocalizedName(noteName);
+                const base = noteName.replace(/\d+$/, '');
+                // Don't show duplicate if localized name matches base note
+                if (localName === base) {
+                    label.innerHTML = noteName;
+                } else {
+                    label.innerHTML = `${noteName}<br>${localName}`;
+                }
+            }
+        });
+    }
+
     return {
         init,
         render,
@@ -224,6 +246,7 @@ const Keyboard = (function() {
         showCorrect,
         showWrong,
         setLabelsVisible,
+        updateNamingStyle,
         clearHighlights,
         getMidiForNote
     };

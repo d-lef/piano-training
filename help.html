@@ -10,51 +10,55 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #1a1a2e;
-            color: #eee;
+            background: #252525;
+            color: #FFFFFF;
             min-height: 100vh;
             padding: 20px;
             line-height: 1.6;
         }
         /* Light theme */
         body.light-theme {
-            background: #f0f4f8;
+            background: #f5f5f5;
             color: #333;
         }
         body.light-theme .back-btn {
-            background: #e94560;
+            background: #505050;
         }
         body.light-theme h1 {
-            color: #16a34a;
+            color: #333;
         }
         body.light-theme h2 {
-            color: #3b82f6;
-            border-bottom-color: #cbd5e1;
+            color: #505050;
+            border-bottom-color: #ddd;
         }
         body.light-theme .option {
-            background: #e2e8f0;
+            background: #e8e8e8;
         }
         body.light-theme .keyboard-row {
-            background: #e2e8f0;
+            background: #e8e8e8;
         }
         body.light-theme .key {
-            background: #cbd5e1;
+            background: #d0d0d0;
         }
         body.light-theme .tip {
-            background: #e2e8f0;
+            background: #e8e8e8;
         }
         body.light-theme .note {
-            background: #dbeafe;
+            background: #e0e0e0;
         }
         body.light-theme table th {
-            color: #3b82f6;
+            color: #505050;
         }
         body.light-theme table td,
         body.light-theme table th {
-            border-bottom-color: #cbd5e1;
+            border-bottom-color: #ddd;
         }
         .container {
             max-width: 800px;
@@ -65,7 +69,7 @@
             align-items: center;
             gap: 8px;
             padding: 10px 20px;
-            background: #e94560;
+            background: #505050;
             color: #fff;
             text-decoration: none;
             border-radius: 8px;
@@ -74,7 +78,7 @@
             transition: background 0.2s;
         }
         .back-btn:hover {
-            background: #ff6b6b;
+            background: #606060;
         }
         .coffee-btn {
             display: inline-block;
@@ -92,10 +96,10 @@
         h1 {
             font-size: 32px;
             margin-bottom: 10px;
-            color: #4ade80;
+            color: #FFFFFF;
         }
         .subtitle {
-            color: #888;
+            color: #B0B0B0;
             margin-bottom: 30px;
             font-size: 18px;
         }
@@ -103,8 +107,8 @@
             font-size: 20px;
             margin-top: 30px;
             margin-bottom: 15px;
-            color: #60a5fa;
-            border-bottom: 1px solid #333;
+            color: #E0E0E0;
+            border-bottom: 1px solid #404040;
             padding-bottom: 5px;
         }
         ul {
@@ -118,7 +122,7 @@
         }
         ul li::before {
             content: "•";
-            color: #4ade80;
+            color: #E0E0E0;
             position: absolute;
             left: 0;
         }
@@ -126,13 +130,13 @@
             margin-bottom: 10px;
         }
         .option {
-            background: #16213e;
+            background: #2D2D2D;
             padding: 10px 15px;
             border-radius: 6px;
             margin-bottom: 8px;
         }
         .option strong {
-            color: #4ade80;
+            color: #FFFFFF;
         }
         table {
             width: 100%;
@@ -142,13 +146,13 @@
         th, td {
             padding: 10px;
             text-align: left;
-            border-bottom: 1px solid #333;
+            border-bottom: 1px solid #404040;
         }
         th {
-            color: #60a5fa;
+            color: #E0E0E0;
         }
         .keyboard-row {
-            background: #16213e;
+            background: #2D2D2D;
             padding: 10px 15px;
             border-radius: 6px;
             margin-bottom: 8px;
@@ -156,7 +160,7 @@
         }
         .key {
             display: inline-block;
-            background: #333;
+            background: #505050;
             padding: 4px 10px;
             border-radius: 4px;
             margin: 2px;
@@ -164,18 +168,18 @@
             text-align: center;
         }
         .tip {
-            background: #16213e;
+            background: #2D2D2D;
             padding: 12px 15px;
             border-radius: 6px;
             margin-bottom: 8px;
-            border-left: 3px solid #4ade80;
+            border-left: 3px solid #808080;
         }
         .note {
-            background: #1e3a5f;
+            background: #353535;
             padding: 12px 15px;
             border-radius: 6px;
             margin: 15px 0;
-            border-left: 3px solid #60a5fa;
+            border-left: 3px solid #E0E0E0;
         }
     </style>
 </head>
@@ -185,6 +189,14 @@
 
         <h1>Piano Note Trainer</h1>
         <p class="subtitle">Learn to read music notes on the staff</p>
+
+        <h2>About Me</h2>
+        <p>
+            Developed by <a href="https://www.linkedin.com/in/daniel-lefanov/" target="_blank" style="color: #E0E0E0;">Daniel Lefanov</a>
+        </p>
+        <p style="margin-top: 15px;">
+            <a href="https://buymeacoffee.com/daniel_l" target="_blank" class="coffee-btn">☕ Buy me a coffee</a>
+        </p>
 
         <h2>Features</h2>
         <ul>
@@ -240,14 +252,13 @@
             <tr><td>Note hints</td><td>Show note name below the staff</td></tr>
             <tr><td>Key labels</td><td>Show note names on piano keys</td></tr>
             <tr><td>Accidentals</td><td>Include sharps and flats (C#, D#, etc.)</td></tr>
-            <tr><td>Smart</td><td>Prioritize notes you struggle with</td></tr>
             <tr><td>Timer</td><td>Show/hide response time counter</td></tr>
             <tr><td>Sound</td><td>Piano sound on/off</td></tr>
             <tr><td>Dark</td><td>Dark/light theme toggle</td></tr>
         </table>
 
         <h2>Smart Repetition</h2>
-        <p>When enabled, the app learns which notes you struggle with:</p>
+        <p>The app automatically learns which notes you struggle with:</p>
         <ul>
             <li>Notes you miss appear more often</li>
             <li>Slow responses get more practice</li>
@@ -266,7 +277,6 @@
         <h2>Tips for Learning</h2>
         <div class="tip">Start with a small range (e.g., C4-G4) and expand gradually</div>
         <div class="tip">Disable "Note hints" and "Key labels" as you improve</div>
-        <div class="tip">Keep "Smart" enabled for efficient learning</div>
         <div class="tip">The app auto-pauses when you switch windows</div>
         <div class="tip">Use the pause button (top-right) when you need a break</div>
 
@@ -274,14 +284,6 @@
             <strong>Portable:</strong> Copy this entire folder to any computer - it will work the same way.
             Settings and statistics are stored in your browser and won't transfer.
         </div>
-
-        <h2>About</h2>
-        <p>
-            Developed by <a href="https://www.linkedin.com/in/daniel-lefanov/" target="_blank" style="color: #60a5fa;">Daniel Lefanov</a>
-        </p>
-        <p style="margin-top: 15px;">
-            <a href="https://buymeacoffee.com/daniel_l" target="_blank" class="coffee-btn">☕ Buy me a coffee</a>
-        </p>
 
         <br><br>
         <a href="index.html" class="back-btn">← Back to Training</a>

@@ -5,18 +5,88 @@ const Notes = (function() {
     const NOTE_NAMES = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
     const ACCIDENTALS = ['C#', 'D#', 'F#', 'G#', 'A#'];
 
-    // Russian solfege names
-    const RUSSIAN_NAMES = {
-        'C': 'До', 'D': 'Ре', 'E': 'Ми', 'F': 'Фа',
-        'G': 'Соль', 'A': 'Ля', 'B': 'Си',
-        'C#': 'До#', 'D#': 'Ре#', 'F#': 'Фа#', 'G#': 'Соль#', 'A#': 'Ля#'
+    // Note naming systems (solfege styles)
+    const NAMING_SYSTEMS = {
+        'abc': {
+            label: 'ABC (International)',
+            names: {
+                'C': 'C', 'D': 'D', 'E': 'E', 'F': 'F',
+                'G': 'G', 'A': 'A', 'B': 'B',
+                'C#': 'C#', 'D#': 'D#', 'F#': 'F#', 'G#': 'G#', 'A#': 'A#'
+            }
+        },
+        'romance': {
+            label: 'Do-Re-Mi (Romance)',
+            names: {
+                'C': 'Do', 'D': 'Re', 'E': 'Mi', 'F': 'Fa',
+                'G': 'Sol', 'A': 'La', 'B': 'Si',
+                'C#': 'Do#', 'D#': 'Re#', 'F#': 'Fa#', 'G#': 'Sol#', 'A#': 'La#'
+            }
+        },
+        'german': {
+            label: 'German (C-D-E-H)',
+            names: {
+                'C': 'C', 'D': 'D', 'E': 'E', 'F': 'F',
+                'G': 'G', 'A': 'A', 'B': 'H',
+                'C#': 'Cis', 'D#': 'Dis', 'F#': 'Fis', 'G#': 'Gis', 'A#': 'Ais'
+            }
+        },
+        'russian': {
+            label: 'Russian (До-Ре-Ми)',
+            names: {
+                'C': 'До', 'D': 'Ре', 'E': 'Ми', 'F': 'Фа',
+                'G': 'Соль', 'A': 'Ля', 'B': 'Си',
+                'C#': 'До#', 'D#': 'Ре#', 'F#': 'Фа#', 'G#': 'Соль#', 'A#': 'Ля#'
+            }
+        },
+        'japanese': {
+            label: 'Japanese (ド-レ-ミ)',
+            names: {
+                'C': 'ド', 'D': 'レ', 'E': 'ミ', 'F': 'ファ',
+                'G': 'ソ', 'A': 'ラ', 'B': 'シ',
+                'C#': 'ド#', 'D#': 'レ#', 'F#': 'ファ#', 'G#': 'ソ#', 'A#': 'ラ#'
+            }
+        },
+        'indian': {
+            label: 'Indian (Sa-Re-Ga)',
+            names: {
+                'C': 'Sa', 'D': 'Re', 'E': 'Ga', 'F': 'Ma',
+                'G': 'Pa', 'A': 'Dha', 'B': 'Ni',
+                'C#': 'Sa#', 'D#': 'Re#', 'F#': 'Ma#', 'G#': 'Pa#', 'A#': 'Dha#'
+            }
+        }
     };
 
-    // Get Russian name for a note
-    function getRussianName(noteName) {
-        // Extract base note (without octave)
+    // Current naming system (default: abc)
+    let currentNamingSystem = 'abc';
+
+    // Set the current naming system
+    function setNamingSystem(system) {
+        if (NAMING_SYSTEMS[system]) {
+            currentNamingSystem = system;
+        }
+    }
+
+    // Get localized name for a note
+    function getLocalizedName(noteName, system = null) {
+        const useSystem = system || currentNamingSystem;
         const base = noteName.replace(/\d+$/, '');
-        return RUSSIAN_NAMES[base] || base;
+        const systemData = NAMING_SYSTEMS[useSystem];
+        if (!systemData) return base;
+        return systemData.names[base] || base;
+    }
+
+    // Legacy function - get Russian name (for backwards compatibility)
+    function getRussianName(noteName) {
+        return getLocalizedName(noteName, 'russian');
+    }
+
+    // Get available naming systems for UI
+    function getNamingSystems() {
+        return Object.entries(NAMING_SYSTEMS).map(([key, data]) => ({
+            value: key,
+            label: data.label
+        }));
     }
 
     // Generate all notes for a given octave range
@@ -140,7 +210,7 @@ const Notes = (function() {
     return {
         NOTE_NAMES,
         ACCIDENTALS,
-        RUSSIAN_NAMES,
+        NAMING_SYSTEMS,
         TREBLE_RANGE,
         BASS_RANGE,
         KEYBOARD_RANGE,
@@ -152,6 +222,9 @@ const Notes = (function() {
         notesEqual,
         getClefForNote,
         getAllNoteOptions,
-        getRussianName
+        getRussianName,
+        getLocalizedName,
+        setNamingSystem,
+        getNamingSystems
     };
 })();

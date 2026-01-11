@@ -66,14 +66,13 @@ A simple app to practice reading music notes on the staff.
 | **Note hints** | Show note name below staff |
 | **Key labels** | Show note names on piano keys |
 | **Accidentals** | Include sharps/flats |
-| **Smart** | Prioritize notes you struggle with (recommended) |
 | **Timer** | Show/hide response time counter |
 | **Sound** | Piano sound on/off |
 | **Dark** | Dark/light theme |
 
 ## Smart Repetition
 
-When enabled, the app learns which notes you struggle with:
+The app automatically learns which notes you struggle with:
 
 - Notes you miss appear more often
 - Slow responses get more practice
@@ -91,7 +90,6 @@ When enabled, the app learns which notes you struggle with:
 
 - Start with a small range (e.g., C4-G4) and expand gradually
 - Disable "Note hints" and "Key labels" as you improve
-- Keep "Smart" enabled for efficient learning
 - The app auto-pauses when you switch windows
 
 ## Portable

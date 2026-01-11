@@ -24,24 +24,41 @@ const App = (function() {
     const noteLabelEl = document.getElementById('note-label');
 
     // Settings elements
+    const namingStyleSelect = document.getElementById('naming-style-select');
     const clefSelect = document.getElementById('clef-select');
     const rangeMinSelect = document.getElementById('range-min');
     const rangeMaxSelect = document.getElementById('range-max');
     const showNoteNamesCheckbox = document.getElementById('show-note-names');
     const keyboardLabelsToggle = document.getElementById('keyboard-labels-toggle');
     const accidentalsToggle = document.getElementById('accidentals-toggle');
-    const smartRepetitionToggle = document.getElementById('smart-repetition-toggle');
     const timerToggle = document.getElementById('timer-toggle');
     const soundToggle = document.getElementById('sound-toggle');
-    const themeToggle = document.getElementById('theme-toggle');
+    const themeBtn = document.getElementById('theme-btn');
     const newSessionBtn = document.getElementById('new-session-btn');
 
     // Apply theme
     function applyTheme(isDark) {
         document.body.classList.toggle('light-theme', !isDark);
+        // Update theme button icon (monochrome symbols)
+        if (themeBtn) {
+            themeBtn.textContent = isDark ? '☾' : '☀';
+        }
+    }
+
+    // Populate naming style selector
+    function populateNamingStyleSelector() {
+        const systems = Notes.getNamingSystems();
+        namingStyleSelect.innerHTML = '';
+        for (const { value, label } of systems) {
+            const opt = document.createElement('option');
+            opt.value = value;
+            opt.textContent = label;
+            namingStyleSelect.appendChild(opt);
+        }
     }
 
     function init() {
+        populateNamingStyleSelector();
         loadSettings();
         populateRangeSelectors();
         setupEventListeners();
@@ -59,9 +76,6 @@ const App = (function() {
         // Apply initial keyboard labels visibility
         const settings = Storage.getSettings();
         Keyboard.setLabelsVisible(settings.showKeyboardLabels);
-
-        // Apply initial theme
-        applyTheme(settings.darkMode !== false);
 
         // Initialize staff
         Staff.init();
@@ -124,17 +138,23 @@ const App = (function() {
 
     function loadSettings() {
         const settings = Storage.getSettings();
+        namingStyleSelect.value = settings.namingStyle || 'abc';
         clefSelect.value = settings.clef;
         showNoteNamesCheckbox.checked = settings.showNoteNames;
         keyboardLabelsToggle.checked = settings.showKeyboardLabels;
         accidentalsToggle.checked = settings.includeAccidentals;
-        smartRepetitionToggle.checked = settings.smartRepetition !== false;
         timerToggle.checked = settings.showTimer !== false;
         soundToggle.checked = settings.soundEnabled;
-        themeToggle.checked = settings.darkMode !== false;
+
+        // Apply naming style
+        Notes.setNamingSystem(settings.namingStyle || 'abc');
 
         // Apply initial timer visibility
         updateTimerVisibility(settings.showTimer !== false);
+
+        // Apply initial theme
+        const isDark = settings.darkMode !== false;
+        applyTheme(isDark);
     }
 
     function updateTimerVisibility(visible) {
@@ -166,35 +186,51 @@ const App = (function() {
     }
 
     function setupEventListeners() {
+        namingStyleSelect.addEventListener('change', onSettingsChange);
         clefSelect.addEventListener('change', onSettingsChange);
         rangeMinSelect.addEventListener('change', onSettingsChange);
         rangeMaxSelect.addEventListener('change', onSettingsChange);
         showNoteNamesCheckbox.addEventListener('change', onSettingsChange);
         keyboardLabelsToggle.addEventListener('change', onSettingsChange);
         accidentalsToggle.addEventListener('change', onSettingsChange);
-        smartRepetitionToggle.addEventListener('change', onSettingsChange);
         timerToggle.addEventListener('change', onSettingsChange);
         soundToggle.addEventListener('change', onSettingsChange);
-        themeToggle.addEventListener('change', onSettingsChange);
+
+        // Theme button click handler
+        themeBtn.addEventListener('click', toggleTheme);
 
         newSessionBtn.addEventListener('click', startNewSession);
     }
 
+    function toggleTheme() {
+        const settings = Storage.getSettings();
+        const newDarkMode = !(settings.darkMode !== false);
+        settings.darkMode = newDarkMode;
+        Storage.saveSettings(settings);
+        applyTheme(newDarkMode);
+    }
+
     function onSettingsChange() {
+        // Preserve current darkMode setting
+        const currentSettings = Storage.getSettings();
         const settings = {
+            namingStyle: namingStyleSelect.value,
             clef: clefSelect.value,
             rangeMin: rangeMinSelect.value,
             rangeMax: rangeMaxSelect.value,
             showNoteNames: showNoteNamesCheckbox.checked,
             showKeyboardLabels: keyboardLabelsToggle.checked,
             includeAccidentals: accidentalsToggle.checked,
-            smartRepetition: smartRepetitionToggle.checked,
             showTimer: timerToggle.checked,
             soundEnabled: soundToggle.checked,
-            darkMode: themeToggle.checked
+            darkMode: currentSettings.darkMode
         };
 
         Storage.saveSettings(settings);
+
+        // Apply naming style
+        Notes.setNamingSystem(settings.namingStyle);
+
         updateAvailableNotes();
 
         // Show/hide note label based on setting
@@ -206,12 +242,14 @@ const App = (function() {
 
         // Update keyboard labels
         Keyboard.setLabelsVisible(settings.showKeyboardLabels);
+        Keyboard.updateNamingStyle();
 
         // Update timer visibility
         updateTimerVisibility(settings.showTimer);
 
-        // Update theme
-        applyTheme(settings.darkMode);
+        // Update side panels with new naming style
+        updateMissesPanel();
+        updateSlowestPanel();
     }
 
     function updateAvailableNotes() {
@@ -328,14 +366,9 @@ const App = (function() {
             candidates = availableNotes.filter(n => n.fullName !== previousNote.fullName);
         }
 
-        // Get random note using smart repetition or simple random
+        // Get random note using smart repetition (always enabled)
+        currentNote = getSmartNote(candidates, previousNote);
         const settings = Storage.getSettings();
-        if (settings.smartRepetition) {
-            currentNote = getSmartNote(candidates, previousNote);
-        } else {
-            // Simple random selection
-            currentNote = candidates[Math.floor(Math.random() * candidates.length)];
-        }
 
         // Determine clef
         let clef = settings.clef;
@@ -469,8 +502,8 @@ const App = (function() {
 
         let html = '<div class="panel-title">Mistakes</div>';
         for (const [note, count] of sorted) {
-            const russianName = Notes.getRussianName(note);
-            html += `<div class="miss-item"><span>${note} (${russianName})</span><span class="miss-count">${count}</span></div>`;
+            const localName = Notes.getLocalizedName(note);
+            html += `<div class="miss-item"><span>${note} (${localName})</span><span class="miss-count">${count}</span></div>`;
         }
         panel.innerHTML = html;
     }
@@ -499,9 +532,9 @@ const App = (function() {
 
         let html = '<div class="panel-title">Slowest</div>';
         for (const { note, avg } of top10) {
-            const russianName = Notes.getRussianName(note);
+            const localName = Notes.getLocalizedName(note);
             const timeStr = (avg / 1000).toFixed(1) + 's';
-            html += `<div class="miss-item"><span>${note} (${russianName})</span><span class="time-badge">${timeStr}</span></div>`;
+            html += `<div class="miss-item"><span>${note} (${localName})</span><span class="time-badge">${timeStr}</span></div>`;
         }
         panel.innerHTML = html;
     }
