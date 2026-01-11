@@ -39,8 +39,8 @@
     left: 60px;
     width: 36px;
     height: 36px;
-    background: #ffdd00;
-    color: #000;
+    background: transparent;
+    color: #B0B0B0;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -48,12 +48,12 @@
     font-size: 18px;
     text-decoration: none;
     z-index: 100;
-    transition: all 0.2s;
+    transition: all 0.15s;
 }
 
 #coffee-btn:hover {
-    background: #ffeb55;
-    transform: scale(1.1);
+    background: #3A3A3A;
+    color: #FFFFFF;
 }
 
 /* Settings Button - hidden by default, shown on mobile */
@@ -1016,7 +1016,7 @@ button:active {
     }
 
     #app {
-        padding: 0 10px;
+        padding: 0 50px;
         gap: 0;
         max-width: 100vw;
         height: 100vh;
@@ -1024,7 +1024,7 @@ button:active {
         max-height: 100vh;
         max-height: 100dvh;
         overflow: hidden;
-        justify-content: flex-end;
+        justify-content: flex-start;
     }
 
     /* Hide side panels, settings panel, and score strip in mobile landscape */
@@ -1078,14 +1078,13 @@ button:active {
     }
 
     #staff-container {
-        padding: 0;
-        flex: 1 1 auto;
+        padding: 5px 0;
+        flex: 0 0 auto;
         overflow: visible;
         display: flex;
         flex-direction: column;
-        justify-content: flex-end;
+        justify-content: flex-start;
         align-items: center;
-        padding-bottom: 5px;
     }
 
     #staff-footer {
@@ -1094,10 +1093,11 @@ button:active {
 
     #keyboard-container {
         padding: 0;
-        overflow: hidden;
+        overflow: visible;
         flex: 0 0 auto;
         display: flex;
-        align-items: center;
+        align-items: flex-start;
+        justify-content: center;
     }
 
     #keyboard {
