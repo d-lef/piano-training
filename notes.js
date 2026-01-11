@@ -5,6 +5,20 @@ const Notes = (function() {
     const NOTE_NAMES = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
     const ACCIDENTALS = ['C#', 'D#', 'F#', 'G#', 'A#'];
 
+    // Russian solfege names
+    const RUSSIAN_NAMES = {
+        'C': 'До', 'D': 'Ре', 'E': 'Ми', 'F': 'Фа',
+        'G': 'Соль', 'A': 'Ля', 'B': 'Си',
+        'C#': 'До#', 'D#': 'Ре#', 'F#': 'Фа#', 'G#': 'Соль#', 'A#': 'Ля#'
+    };
+
+    // Get Russian name for a note
+    function getRussianName(noteName) {
+        // Extract base note (without octave)
+        const base = noteName.replace(/\d+$/, '');
+        return RUSSIAN_NAMES[base] || base;
+    }
+
     // Generate all notes for a given octave range
     function generateNotes(minOctave, maxOctave, includeAccidentals = false) {
         const notes = [];
@@ -126,6 +140,7 @@ const Notes = (function() {
     return {
         NOTE_NAMES,
         ACCIDENTALS,
+        RUSSIAN_NAMES,
         TREBLE_RANGE,
         BASS_RANGE,
         KEYBOARD_RANGE,
@@ -136,6 +151,7 @@ const Notes = (function() {
         getRandomNote,
         notesEqual,
         getClefForNote,
-        getAllNoteOptions
+        getAllNoteOptions,
+        getRussianName
     };
 })();
