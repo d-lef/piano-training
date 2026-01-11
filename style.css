@@ -961,13 +961,14 @@ button:active {
 
     #staff-container {
         padding: 3px;
-        min-height: 60px;
+        min-height: 85px;
         flex: 0 0 auto;
+        overflow: visible;
     }
 
     #staff-footer {
-        margin-top: 2px;
-        min-height: 20px;
+        margin-top: 0;
+        min-height: 16px;
     }
 
     #keyboard-container {
