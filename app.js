@@ -265,10 +265,11 @@ const App = (function() {
     }
 
     // Smart repetition: weighted note selection based on mistakes, response time, and distance
+    // Miss weights decay by 0.7x on each correct answer, so struggled notes gradually normalize
     function getSmartNote(candidates, previousNote) {
         const weights = [];
         const BASE_WEIGHT = 1;
-        const MISS_WEIGHT = 3;      // Each miss adds this much weight
+        const MISS_WEIGHT = 3;      // Each miss adds this much weight (decays on correct)
         const TIME_WEIGHT = 0.002;  // Per millisecond above 1 second
         const DISTANCE_PENALTY = 0.7;  // Multiplier for adjacent notes (closer = lower)
 
@@ -588,6 +589,16 @@ const App = (function() {
                 sessionTimes[currentNote.fullName] = [];
             }
             sessionTimes[currentNote.fullName].push(responseTime);
+
+            // Decay miss weight on correct answer (smart learning improvement)
+            // Multiplying by 0.7 means gradual reduction - need multiple corrects to "clear" mistakes
+            if (sessionMisses[currentNote.fullName]) {
+                sessionMisses[currentNote.fullName] *= 0.7;
+                // Remove from tracking if negligible (< 0.1)
+                if (sessionMisses[currentNote.fullName] < 0.1) {
+                    delete sessionMisses[currentNote.fullName];
+                }
+            }
 
             Keyboard.showCorrect(noteName);
             showFeedback('correct');
