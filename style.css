@@ -1106,13 +1106,15 @@ button:active {
         height: 80px;
     }
 
-    /* Key sizing is handled by JavaScript for precise positioning */
+    /* Size keys to fit viewport - JS uses same calculation for positioning */
     .white-key {
+        width: calc((100vw - 20px) / 21 - 2px);
         height: 100%;
         padding-bottom: 2px;
     }
 
     .black-key {
+        width: calc(((100vw - 20px) / 21) * 0.6);
         height: 60%;
     }
 

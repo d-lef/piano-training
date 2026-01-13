@@ -66,15 +66,9 @@ const Keyboard = (function() {
         const isLandscape = window.innerWidth > window.innerHeight;
         const isMobileLandscape = isLandscape && window.innerHeight <= 700;
 
-        // Track if we should use inline styles for precise positioning
-        let useInlineWidths = false;
-
         if (isMobileLandscape) {
-            // Calculate width to fit all keys with padding
-            // Account for 1px border on each side of white keys (2px per key)
-            const totalBorderWidth = totalWhiteKeysNeeded * 2;
-            whiteKeyWidth = Math.floor((window.innerWidth - 20 - totalBorderWidth) / totalWhiteKeysNeeded);
-            useInlineWidths = true;
+            // Match CSS calc: (100vw - 20px) / 21, accounting for borders
+            whiteKeyWidth = Math.floor((window.innerWidth - 20) / totalWhiteKeysNeeded) - 2;
         } else if (window.innerWidth <= 400) {
             whiteKeyWidth = 28;
         } else if (window.innerWidth <= 600) {
@@ -97,11 +91,6 @@ const Keyboard = (function() {
                 key.className = 'white-key';
                 key.dataset.note = fullName;
                 key.dataset.midi = Notes.getMidiNumber(noteName, octave);
-
-                // Apply inline width on mobile for precise positioning
-                if (useInlineWidths) {
-                    key.style.width = whiteKeyWidth + 'px';
-                }
 
                 // Add label (Latin + localized name if different)
                 const label = document.createElement('span');
@@ -129,11 +118,10 @@ const Keyboard = (function() {
 
         // Create black keys (positioned absolutely)
         let whiteKeyIndex = 0;
-        // Account for border width when positioning (1px on each side = 2px per key)
-        const borderWidth = 2;
-        const actualWhiteKeyWidth = whiteKeyWidth + borderWidth;
-        // Black key width - get from CSS or estimate as ~60% of white key
-        const blackKeyWidth = useInlineWidths ? Math.floor(whiteKeyWidth * 0.6) : 30;
+
+        // Get actual rendered white key width (including border)
+        // CSS sets border: 1px solid, so actual width = whiteKeyWidth + 2
+        const actualKeyWidth = whiteKeyWidth + 2;
 
         for (let oct = 0; oct < NUM_OCTAVES; oct++) {
             const octave = START_OCTAVE + oct;
@@ -145,17 +133,12 @@ const Keyboard = (function() {
                 key.dataset.note = fullName;
                 key.dataset.midi = Notes.getMidiNumber(blackKey.note, octave);
 
-                // Apply inline width on mobile
-                if (useInlineWidths) {
-                    key.style.width = blackKeyWidth + 'px';
-                }
-
-                // Position: centered at the junction between the white key and the next one
+                // Position: after the corresponding white key
                 const whiteIndex = whiteKeyIndex + blackKey.afterWhite;
-                // Junction is at the end of the white key (including its border)
-                const junction = (whiteIndex + 1) * actualWhiteKeyWidth;
-                // Center the black key at the junction
-                const leftPos = junction - (blackKeyWidth / 2);
+                // Black key should overlap the boundary between two white keys
+                // Position it so it's centered on the right edge of the white key
+                const blackKeyWidth = actualKeyWidth * 0.6;
+                const leftPos = (whiteIndex * actualKeyWidth) + actualKeyWidth - (blackKeyWidth / 2);
                 key.style.left = `${leftPos}px`;
 
                 key.addEventListener('click', () => handleKeyPress(fullName));
