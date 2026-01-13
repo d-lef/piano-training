@@ -1102,8 +1102,11 @@ button:active {
     }
 
     #center-content {
+        flex: 1;
         gap: 0;
         overflow: visible;
+        display: flex;
+        flex-direction: column;
     }
 
     #score-strip {
