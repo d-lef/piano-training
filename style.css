@@ -39,8 +39,8 @@
     left: 60px;
     width: 36px;
     height: 36px;
-    background: transparent;
-    color: #B0B0B0;
+    background: #ffdd00;
+    color: #000;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -48,12 +48,12 @@
     font-size: 18px;
     text-decoration: none;
     z-index: 100;
-    transition: all 0.15s;
+    transition: all 0.2s;
 }
 
 #coffee-btn:hover {
-    background: #3A3A3A;
-    color: #FFFFFF;
+    background: #ffeb55;
+    transform: scale(1.1);
 }
 
 /* Settings Button - hidden by default, shown on mobile */
@@ -1138,6 +1138,8 @@ button:active {
 
     #coffee-btn {
         top: 52px;
+        background: #ffdd00;
+        color: #000;
     }
 
     #theme-btn {

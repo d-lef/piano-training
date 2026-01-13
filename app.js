@@ -39,9 +39,35 @@ const App = (function() {
     // Apply theme
     function applyTheme(isDark) {
         document.body.classList.toggle('light-theme', !isDark);
-        // Update theme button icon (monochrome symbols)
-        if (themeBtn) {
-            themeBtn.textContent = isDark ? '☾' : '☼';
+    }
+
+    // Get system theme preference
+    function getSystemThemePreference() {
+        return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
+
+    // Listen for system theme changes
+    function setupSystemThemeListener() {
+        if (window.matchMedia) {
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+                const settings = Storage.getSettings();
+                // Only auto-switch if user hasn't manually set a preference
+                if (settings.darkMode === undefined || settings.darkMode === 'auto') {
+                    applyTheme(e.matches);
+                }
+            });
+        }
+    }
+
+    // Update theme button icon based on mode
+    function updateThemeButtonIcon(mode) {
+        if (!themeBtn) return;
+        if (mode === 'auto' || mode === undefined) {
+            themeBtn.textContent = '◐'; // half moon for auto
+        } else if (mode === true) {
+            themeBtn.textContent = '☾'; // moon for dark
+        } else {
+            themeBtn.textContent = '☼'; // sun for light
         }
     }
 
@@ -158,9 +184,19 @@ const App = (function() {
         // Apply initial timer visibility
         updateTimerVisibility(settings.showTimer !== false);
 
-        // Apply initial theme
-        const isDark = settings.darkMode !== false;
+        // Apply initial theme - use system preference if not manually set
+        let isDark;
+        const themeMode = settings.darkMode;
+        if (themeMode === undefined || themeMode === 'auto') {
+            isDark = getSystemThemePreference();
+        } else {
+            isDark = themeMode === true;
+        }
         applyTheme(isDark);
+        updateThemeButtonIcon(themeMode === undefined ? 'auto' : themeMode);
+
+        // Listen for system theme changes
+        setupSystemThemeListener();
     }
 
     function updateTimerVisibility(visible) {
@@ -210,10 +246,22 @@ const App = (function() {
 
     function toggleTheme() {
         const settings = Storage.getSettings();
-        const newDarkMode = !(settings.darkMode !== false);
-        settings.darkMode = newDarkMode;
+        // Cycle: auto → dark → light → auto
+        let newMode;
+        if (settings.darkMode === undefined || settings.darkMode === 'auto') {
+            newMode = true;  // dark
+        } else if (settings.darkMode === true) {
+            newMode = false; // light
+        } else {
+            newMode = 'auto'; // back to auto
+        }
+        settings.darkMode = newMode;
         Storage.saveSettings(settings);
-        applyTheme(newDarkMode);
+
+        // Apply the theme
+        const isDark = newMode === 'auto' ? getSystemThemePreference() : newMode === true;
+        applyTheme(isDark);
+        updateThemeButtonIcon(newMode);
     }
 
     function onSettingsChange() {
