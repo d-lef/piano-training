@@ -13,9 +13,9 @@ const Staff = (function() {
         const isMobileLandscape = isLandscape && window.innerHeight <= 700;
 
         if (isMobileLandscape) {
-            // VexFlow needs minimum space: ~30px above staff for clef, ~40px for staff lines, ~30px below for ledger lines
-            // Render at 133x111 internally, display at 120x100 (scale 0.9)
-            return { width: 120, height: 100, scale: 0.9 };
+            // VexFlow needs minimum space: ~30px above staff for clef, ~40px for staff lines, ~40px below for ledger lines
+            // Render at 133x122 internally, display at 120x110 (scale 0.9)
+            return { width: 120, height: 110, scale: 0.9 };
         } else if (window.innerWidth <= 400) {
             return { width: 160, height: 120 };
         } else if (window.innerWidth <= 600) {

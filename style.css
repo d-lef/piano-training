@@ -1078,13 +1078,14 @@ button:active {
     }
 
     #staff-container {
-        padding: 5px 0 15px 0;
+        padding: 5px 0 20px 0;
         flex: 0 0 auto;
         overflow: visible;
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
         align-items: center;
+        min-height: 120px;
     }
 
     #staff-footer {
@@ -1105,15 +1106,13 @@ button:active {
         height: 80px;
     }
 
-    /* Size keys to fit: 21 white keys must fit viewport */
+    /* Key sizing is handled by JavaScript for precise positioning */
     .white-key {
-        width: calc((100vw - 20px) / 21);
         height: 100%;
         padding-bottom: 2px;
     }
 
     .black-key {
-        width: calc((100vw - 20px) / 35);
         height: 60%;
     }
 
