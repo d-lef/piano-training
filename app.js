@@ -574,22 +574,71 @@ const App = (function() {
         const total = correctCount + wrongCount;
         const accuracy = total > 0 ? (correctCount / total * 100).toFixed(0) : '--';
 
+        // Build mistakes section
+        const sortedMisses = Object.entries(sessionMisses)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 5);  // Top 5 for mobile
+
+        let mistakesHtml = '';
+        if (sortedMisses.length > 0) {
+            mistakesHtml = sortedMisses.map(([note, count]) => {
+                const localName = Notes.getLocalizedName(note);
+                const displayCount = Number.isInteger(count) ? count : count.toFixed(1);
+                return `<div class="mobile-stat-item"><span>${note} (${localName})</span><span class="mobile-stat-value">${displayCount}</span></div>`;
+            }).join('');
+        } else {
+            mistakesHtml = '<div class="mobile-stat-empty">None yet</div>';
+        }
+
+        // Build slowest section
+        const avgTimes = [];
+        for (const [note, times] of Object.entries(sessionTimes)) {
+            if (times.length > 0) {
+                const avg = times.reduce((a, b) => a + b, 0) / times.length;
+                avgTimes.push({ note, avg });
+            }
+        }
+        avgTimes.sort((a, b) => b.avg - a.avg);
+        const topSlowest = avgTimes.slice(0, 5);  // Top 5 for mobile
+
+        let slowestHtml = '';
+        if (topSlowest.length > 0) {
+            slowestHtml = topSlowest.map(({ note, avg }) => {
+                const localName = Notes.getLocalizedName(note);
+                const timeStr = (avg / 1000).toFixed(1) + 's';
+                return `<div class="mobile-stat-item"><span>${note} (${localName})</span><span class="mobile-stat-value">${timeStr}</span></div>`;
+            }).join('');
+        } else {
+            slowestHtml = '<div class="mobile-stat-empty">None yet</div>';
+        }
+
         mobileContainer.innerHTML = `
-            <div class="mobile-stat-item">
-                <span class="mobile-stat-label">Correct</span>
-                <span class="mobile-stat-value">${correctCount}</span>
+            <div class="mobile-stat-section">
+                <div class="mobile-stat-title">Session</div>
+                <div class="mobile-stat-item">
+                    <span class="mobile-stat-label">Correct</span>
+                    <span class="mobile-stat-value">${correctCount}</span>
+                </div>
+                <div class="mobile-stat-item">
+                    <span class="mobile-stat-label">Wrong</span>
+                    <span class="mobile-stat-value">${wrongCount}</span>
+                </div>
+                <div class="mobile-stat-item">
+                    <span class="mobile-stat-label">Accuracy</span>
+                    <span class="mobile-stat-value">${accuracy}%</span>
+                </div>
+                <div class="mobile-stat-item">
+                    <span class="mobile-stat-label">Streak</span>
+                    <span class="mobile-stat-value">${stats.currentStreak}</span>
+                </div>
             </div>
-            <div class="mobile-stat-item">
-                <span class="mobile-stat-label">Wrong</span>
-                <span class="mobile-stat-value">${wrongCount}</span>
+            <div class="mobile-stat-section">
+                <div class="mobile-stat-title">Mistakes</div>
+                ${mistakesHtml}
             </div>
-            <div class="mobile-stat-item">
-                <span class="mobile-stat-label">Accuracy</span>
-                <span class="mobile-stat-value">${accuracy}%</span>
-            </div>
-            <div class="mobile-stat-item">
-                <span class="mobile-stat-label">Streak</span>
-                <span class="mobile-stat-value">${stats.currentStreak}</span>
+            <div class="mobile-stat-section">
+                <div class="mobile-stat-title">Slowest</div>
+                ${slowestHtml}
             </div>
             <button id="modal-new-session-btn" class="modal-action-btn">New Session</button>
         `;

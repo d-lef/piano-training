@@ -215,6 +215,31 @@
     color: #FFFFFF;
 }
 
+.mobile-stat-section {
+    margin-bottom: 20px;
+}
+
+.mobile-stat-section:last-of-type {
+    margin-bottom: 15px;
+}
+
+.mobile-stat-title {
+    font-size: 12px;
+    font-weight: bold;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #404040;
+}
+
+.mobile-stat-empty {
+    font-size: 14px;
+    color: #666;
+    padding: 8px 0;
+}
+
 .modal-action-btn {
     width: 100%;
     margin-top: 15px;
@@ -242,6 +267,15 @@ body.light-theme .mobile-stat-label {
 
 body.light-theme .mobile-stat-value {
     color: #333;
+}
+
+body.light-theme .mobile-stat-title {
+    color: #888;
+    border-bottom-color: #ddd;
+}
+
+body.light-theme .mobile-stat-empty {
+    color: #999;
 }
 
 body.light-theme .modal-action-btn {
