@@ -67,8 +67,8 @@ const Keyboard = (function() {
         const isMobileLandscape = isLandscape && window.innerHeight <= 700;
 
         if (isMobileLandscape) {
-            // Match CSS calc: (100vw - 20px) / 21, accounting for borders
-            whiteKeyWidth = Math.floor((window.innerWidth - 20) / totalWhiteKeysNeeded) - 2;
+            // Calculate width to fit all keys - must match CSS calc exactly (no rounding)
+            whiteKeyWidth = (window.innerWidth - 20) / totalWhiteKeysNeeded;
         } else if (window.innerWidth <= 400) {
             whiteKeyWidth = 28;
         } else if (window.innerWidth <= 600) {
@@ -119,10 +119,6 @@ const Keyboard = (function() {
         // Create black keys (positioned absolutely)
         let whiteKeyIndex = 0;
 
-        // Get actual rendered white key width (including border)
-        // CSS sets border: 1px solid, so actual width = whiteKeyWidth + 2
-        const actualKeyWidth = whiteKeyWidth + 2;
-
         for (let oct = 0; oct < NUM_OCTAVES; oct++) {
             const octave = START_OCTAVE + oct;
 
@@ -135,10 +131,9 @@ const Keyboard = (function() {
 
                 // Position: after the corresponding white key
                 const whiteIndex = whiteKeyIndex + blackKey.afterWhite;
-                // Black key should overlap the boundary between two white keys
-                // Position it so it's centered on the right edge of the white key
-                const blackKeyWidth = actualKeyWidth * 0.6;
-                const leftPos = (whiteIndex * actualKeyWidth) + actualKeyWidth - (blackKeyWidth / 2);
+                // Black key width is roughly 60% of white key, center it between whites
+                const blackKeyOffset = whiteKeyWidth * 0.3;
+                const leftPos = (whiteIndex * whiteKeyWidth) + whiteKeyWidth - blackKeyOffset;
                 key.style.left = `${leftPos}px`;
 
                 key.addEventListener('click', () => handleKeyPress(fullName));
