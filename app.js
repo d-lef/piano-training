@@ -59,16 +59,10 @@ const App = (function() {
         }
     }
 
-    // Update theme button icon based on mode
-    function updateThemeButtonIcon(mode) {
+    // Update theme button icon based on current theme (not mode)
+    function updateThemeButtonIcon(isDark) {
         if (!themeBtn) return;
-        if (mode === 'auto' || mode === undefined) {
-            themeBtn.textContent = '◐'; // half moon for auto
-        } else if (mode === true) {
-            themeBtn.textContent = '☾'; // moon for dark
-        } else {
-            themeBtn.textContent = '☼'; // sun for light
-        }
+        themeBtn.textContent = isDark ? '☾' : '☼'; // moon for dark, sun for light
     }
 
     // Populate naming style selector
@@ -193,7 +187,7 @@ const App = (function() {
             isDark = themeMode === true;
         }
         applyTheme(isDark);
-        updateThemeButtonIcon(themeMode === undefined ? 'auto' : themeMode);
+        updateThemeButtonIcon(isDark);
 
         // Listen for system theme changes
         setupSystemThemeListener();
@@ -246,22 +240,15 @@ const App = (function() {
 
     function toggleTheme() {
         const settings = Storage.getSettings();
-        // Cycle: auto → dark → light → auto
-        let newMode;
-        if (settings.darkMode === undefined || settings.darkMode === 'auto') {
-            newMode = true;  // dark
-        } else if (settings.darkMode === true) {
-            newMode = false; // light
-        } else {
-            newMode = 'auto'; // back to auto
-        }
-        settings.darkMode = newMode;
+        // Toggle between dark and light
+        const currentlyDark = !document.body.classList.contains('light-theme');
+        const newIsDark = !currentlyDark;
+
+        settings.darkMode = newIsDark;
         Storage.saveSettings(settings);
 
-        // Apply the theme
-        const isDark = newMode === 'auto' ? getSystemThemePreference() : newMode === true;
-        applyTheme(isDark);
-        updateThemeButtonIcon(newMode);
+        applyTheme(newIsDark);
+        updateThemeButtonIcon(newIsDark);
     }
 
     function onSettingsChange() {
