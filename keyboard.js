@@ -7,20 +7,23 @@ const Keyboard = (function() {
     const START_OCTAVE = 3;
     const NUM_OCTAVES = 3;
 
-    // PC keyboard mapping
+    // PC keyboard mapping (QWERTY + number row only)
     // Current octave offset (0 = starting at C3)
     let octaveOffset = 0;
 
-    // White keys: Z X C V B N M (lower row)
+    // White keys: QWERTY row (piano-style layout)
+    // Q W E R T Y U = C D E F G A B (first octave)
+    // I O P [ ] = C D E F G (second octave)
     const WHITE_KEY_MAP = {
-        'z': 0, 'x': 1, 'c': 2, 'v': 3, 'b': 4, 'n': 5, 'm': 6,  // C D E F G A B
-        'q': 7, 'w': 8, 'e': 9, 'r': 10, 't': 11, 'y': 12, 'u': 13, // Next octave
+        'q': 0, 'w': 1, 'e': 2, 'r': 3, 't': 4, 'y': 5, 'u': 6,  // C D E F G A B
+        'i': 7, 'o': 8, 'p': 9, '[': 10, ']': 11,  // Next octave C D E F G
     };
 
-    // Black keys: S D  G H J (between white keys)
+    // Black keys: Number row (above QWERTY gaps)
+    // 2 3 = C# D#, 5 6 7 = F# G# A#, 9 0 - = C# D# F#
     const BLACK_KEY_MAP = {
-        's': 0, 'd': 1, 'g': 2, 'h': 3, 'j': 4,  // C# D# F# G# A#
-        '2': 5, '3': 6, '5': 7, '6': 8, '7': 9,  // Next octave sharps
+        '2': 0, '3': 1, '5': 2, '6': 3, '7': 4,  // C# D# F# G# A#
+        '9': 5, '0': 6, '-': 7,  // Next octave C# D# F#
     };
 
     // Callbacks
@@ -198,6 +201,13 @@ const Keyboard = (function() {
     }
 
     function handleKeyPress(noteName) {
+        // Visual feedback - briefly highlight the key
+        const keyEl = keyElements[noteName];
+        if (keyEl) {
+            keyEl.classList.add('pressed');
+            setTimeout(() => keyEl.classList.remove('pressed'), 150);
+        }
+
         // Play sound FIRST for instant feedback
         if (onPlaySound) {
             const midi = keyElements[noteName]?.dataset.midi;
