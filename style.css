@@ -1166,7 +1166,7 @@ button:active {
 
     #keyboard-container {
         padding: 0 10px;
-        padding-bottom: calc(50px + env(safe-area-inset-bottom, 0px));
+        padding-bottom: calc(35px + env(safe-area-inset-bottom, 0px));
         overflow: visible;
         flex: 0 0 auto;
         display: flex;
