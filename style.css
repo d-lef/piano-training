@@ -1123,6 +1123,7 @@ button:active {
         justify-content: flex-start;
         align-items: center;
         min-height: 120px;
+        margin: auto 0; /* Center vertically between top and keyboard */
     }
 
     #staff-footer {
