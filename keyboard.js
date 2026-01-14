@@ -6,6 +6,15 @@ const Keyboard = (function() {
     // Keyboard range (3 octaves: C3 to B5)
     const START_OCTAVE = 3;
     const NUM_OCTAVES = 3;
+    const START_MIDI = 48; // C3
+    const END_MIDI = 83;   // B5
+
+    // MIDI state
+    let midiAccess = null;
+    let midiInputs = [];
+
+    // MIDI note names for converting MIDI number to note name
+    const MIDI_NOTE_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
 
     // PC keyboard mapping (QWERTY + number row only)
     // Current octave offset (0 = starting at C3)
@@ -49,6 +58,7 @@ const Keyboard = (function() {
         onPlaySound = soundCallback;
         render();
         setupKeyboardListeners();
+        setupMIDI();
 
         // Re-render on resize for responsive layout
         let resizeTimeout;
@@ -56,6 +66,105 @@ const Keyboard = (function() {
             clearTimeout(resizeTimeout);
             resizeTimeout = setTimeout(render, 150);
         });
+    }
+
+    // MIDI Setup
+    function setupMIDI() {
+        if (!navigator.requestMIDIAccess) {
+            console.log('Web MIDI API not supported in this browser');
+            updateMIDIStatus(false, 'Not supported');
+            return;
+        }
+
+        navigator.requestMIDIAccess()
+            .then(onMIDISuccess)
+            .catch(onMIDIFailure);
+    }
+
+    function onMIDISuccess(access) {
+        midiAccess = access;
+        connectMIDIInputs();
+
+        // Listen for device connect/disconnect
+        midiAccess.onstatechange = (e) => {
+            console.log('MIDI state change:', e.port.name, e.port.state);
+            connectMIDIInputs();
+        };
+    }
+
+    function onMIDIFailure(error) {
+        console.log('MIDI access denied:', error);
+        updateMIDIStatus(false, 'Access denied');
+    }
+
+    function connectMIDIInputs() {
+        midiInputs = [];
+        const inputs = midiAccess.inputs.values();
+
+        for (let input of inputs) {
+            if (input.state === 'connected') {
+                input.onmidimessage = handleMIDIMessage;
+                midiInputs.push(input.name);
+                console.log('MIDI input connected:', input.name);
+            }
+        }
+
+        if (midiInputs.length > 0) {
+            updateMIDIStatus(true, midiInputs[0]);
+        } else {
+            updateMIDIStatus(false, 'No device');
+        }
+    }
+
+    function handleMIDIMessage(event) {
+        const [status, midiNote, velocity] = event.data;
+
+        // Note On message (144-159) with velocity > 0
+        const isNoteOn = (status >= 144 && status <= 159) && velocity > 0;
+
+        if (isNoteOn) {
+            // Check if note is within our keyboard range
+            if (midiNote >= START_MIDI && midiNote <= END_MIDI) {
+                const noteName = midiToNoteName(midiNote);
+                if (noteName) {
+                    handleKeyPress(noteName);
+                }
+            } else {
+                // Note outside range - still play sound but don't register as answer
+                if (onPlaySound) {
+                    onPlaySound(midiNote);
+                }
+            }
+        }
+    }
+
+    function midiToNoteName(midiNumber) {
+        const octave = Math.floor(midiNumber / 12) - 1;
+        const noteIndex = midiNumber % 12;
+        const noteName = MIDI_NOTE_NAMES[noteIndex];
+        return `${noteName}${octave}`;
+    }
+
+    function updateMIDIStatus(connected, deviceName) {
+        const indicator = document.getElementById('midi-status');
+        if (indicator) {
+            const dot = indicator.querySelector('.midi-dot');
+            const text = indicator.querySelector('.midi-text');
+
+            if (connected) {
+                dot.classList.add('connected');
+                dot.classList.remove('disconnected');
+                text.textContent = `MIDI: ${deviceName}`;
+                indicator.title = `Connected to ${deviceName}`;
+            } else {
+                dot.classList.remove('connected');
+                dot.classList.add('disconnected');
+                text.textContent = `MIDI: ${deviceName}`;
+                indicator.title = deviceName === 'Not supported'
+                    ? 'Web MIDI not supported in this browser (try Chrome or Edge)'
+                    : 'No MIDI device connected';
+            }
+        }
     }
 
     function render() {

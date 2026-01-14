@@ -866,6 +866,35 @@ button:active {
     font-size: 12px;
     color: #666;
     padding: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+#midi-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: #888;
+    cursor: default;
+}
+
+.midi-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    transition: background-color 0.3s;
+}
+
+.midi-dot.connected {
+    background-color: #4CAF50;
+    box-shadow: 0 0 4px #4CAF50;
+}
+
+.midi-dot.disconnected {
+    background-color: #666;
 }
 
 /* Responsive */
@@ -1450,6 +1479,14 @@ body.light-theme .score-item .label {
 
 body.light-theme #keyboard-hints {
     color: #666;
+}
+
+body.light-theme #midi-status {
+    color: #666;
+}
+
+body.light-theme .midi-dot.disconnected {
+    background-color: #999;
 }
 
 body.light-theme .miss-item {
