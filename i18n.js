@@ -988,20 +988,14 @@ const I18n = (function() {
             notesLabel.title = t('notesStyleTooltip');
         }
 
-        const clefLabel = document.querySelector('#settings-panel .setting-group:nth-child(2) label');
-        if (clefLabel) {
-            clefLabel.textContent = t('clef');
-            clefLabel.title = t('clefTooltip');
-        }
-
-        const rangeLabel = document.querySelector('#settings-panel .setting-group:nth-child(3) label');
+        const rangeLabel = document.querySelector('#settings-panel .setting-group:nth-child(2) label');
         if (rangeLabel) {
             rangeLabel.textContent = t('range');
             rangeLabel.title = t('rangeTooltip');
         }
 
         // Range "to" text
-        const rangeToSpan = document.querySelector('#settings-panel .setting-group:nth-child(3) span');
+        const rangeToSpan = document.querySelector('#settings-panel .setting-group:nth-child(2) span');
         if (rangeToSpan) rangeToSpan.textContent = t('to');
 
         // Toggle labels
@@ -1017,16 +1011,6 @@ const I18n = (function() {
                 }
             }
         });
-
-        // Clef select options
-        const clefSelect = document.getElementById('clef-select');
-        if (clefSelect) {
-            clefSelect.title = t('clefSelectTooltip');
-            const options = clefSelect.options;
-            if (options[0]) options[0].textContent = t('treble');
-            if (options[1]) options[1].textContent = t('bass');
-            if (options[2]) options[2].textContent = t('both');
-        }
 
         // Range selects tooltips
         const rangeMin = document.getElementById('range-min');

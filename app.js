@@ -25,7 +25,6 @@ const App = (function() {
 
     // Settings elements
     const namingStyleSelect = document.getElementById('naming-style-select');
-    const clefSelect = document.getElementById('clef-select');
     const rangeMinSelect = document.getElementById('range-min');
     const rangeMaxSelect = document.getElementById('range-max');
     const showNoteNamesCheckbox = document.getElementById('show-note-names');
@@ -194,7 +193,6 @@ const App = (function() {
     function loadSettings() {
         const settings = Storage.getSettings();
         namingStyleSelect.value = settings.namingStyle || 'abc';
-        clefSelect.value = settings.clef;
         showNoteNamesCheckbox.checked = settings.showNoteNames;
         keyboardLabelsToggle.checked = settings.showKeyboardLabels;
         accidentalsToggle.checked = settings.includeAccidentals;
@@ -259,7 +257,6 @@ const App = (function() {
 
     function setupEventListeners() {
         namingStyleSelect.addEventListener('change', onSettingsChange);
-        clefSelect.addEventListener('change', onSettingsChange);
         rangeMinSelect.addEventListener('change', onSettingsChange);
         rangeMaxSelect.addEventListener('change', onSettingsChange);
         showNoteNamesCheckbox.addEventListener('change', onSettingsChange);
@@ -297,7 +294,6 @@ const App = (function() {
         const currentSettings = Storage.getSettings();
         const settings = {
             namingStyle: namingStyleSelect.value,
-            clef: clefSelect.value,
             rangeMin: rangeMinSelect.value,
             rangeMax: rangeMaxSelect.value,
             showNoteNames: showNoteNamesCheckbox.checked,
@@ -485,17 +481,6 @@ const App = (function() {
             modalNamingStyle.value = namingStyleSelect.value;
             modalNamingStyle.addEventListener('change', () => {
                 namingStyleSelect.value = modalNamingStyle.value;
-                onSettingsChange();
-            });
-        }
-
-        // Clef
-        const modalClef = mobileContainer.querySelector('#clef-select');
-        if (modalClef) {
-            modalClef.id = 'modal-clef-select';
-            modalClef.value = clefSelect.value;
-            modalClef.addEventListener('change', () => {
-                clefSelect.value = modalClef.value;
                 onSettingsChange();
             });
         }
@@ -710,11 +695,8 @@ const App = (function() {
         currentNote = getSmartNote(candidates, previousNote);
         const settings = Storage.getSettings();
 
-        // Determine clef
-        let clef = settings.clef;
-        if (clef === 'both') {
-            clef = Notes.getClefForNote(currentNote);
-        }
+        // Determine clef automatically based on note
+        const clef = Notes.getClefForNote(currentNote);
 
         // Render on staff
         Staff.renderNote(currentNote, clef);
