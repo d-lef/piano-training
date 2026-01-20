@@ -1062,34 +1062,38 @@ const App = (function() {
 
         console.log('[Sound] AudioContext state:', audioContext.state);
 
-        // Resume audio context if suspended (iOS Safari requires this in user gesture)
-        if (audioContext.state === 'suspended') {
-            console.log('[Sound] Resuming suspended AudioContext');
-            audioContext.resume().then(() => {
-                console.log('[Sound] AudioContext resumed, new state:', audioContext.state);
-            });
-        }
+        // Helper function to actually play the sound
+        const doPlay = () => {
+            // Ensure iOS audio is unlocked
+            unlockiOSAudio();
 
-        // Ensure iOS audio is unlocked (must happen in user gesture call stack)
-        unlockiOSAudio();
+            try {
+                const sampleName = midiToSampleName(midiNote);
+                const cachedBuffer = pianoSamples[sampleName];
+                console.log('[Sound] Sample:', sampleName, 'Cached:', !!cachedBuffer);
 
-        try {
-            // Check cache first for instant playback
-            const sampleName = midiToSampleName(midiNote);
-            const cachedBuffer = pianoSamples[sampleName];
-            console.log('[Sound] Sample:', sampleName, 'Cached:', !!cachedBuffer);
-
-            if (cachedBuffer) {
-                // Play immediately from cache
-                playBuffer(cachedBuffer);
-            } else {
-                // Load and play (will have delay, but only for uncached notes)
-                loadSample(midiNote).then(buffer => {
-                    if (buffer) playBuffer(buffer);
-                });
+                if (cachedBuffer) {
+                    playBuffer(cachedBuffer);
+                } else {
+                    loadSample(midiNote).then(buffer => {
+                        if (buffer) playBuffer(buffer);
+                    });
+                }
+            } catch (e) {
+                console.log('Audio not available:', e);
             }
-        } catch (e) {
-            console.log('Audio not available:', e);
+        };
+
+        // Resume audio context if suspended, then play
+        if (audioContext.state === 'suspended') {
+            console.log('[Sound] Resuming suspended AudioContext before playing');
+            audioContext.resume().then(() => {
+                console.log('[Sound] AudioContext resumed, now playing');
+                doPlay();
+            });
+        } else {
+            // Context already running, play immediately
+            doPlay();
         }
     }
 
