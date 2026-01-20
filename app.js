@@ -990,7 +990,7 @@ const App = (function() {
     }
 
     // Play piano sound using samples
-    async function playSound(midiNote) {
+    function playSound(midiNote) {
         if (!soundToggle.checked) return;
 
         // Create audio context on first use if needed (mobile requires user gesture)
@@ -1003,13 +1003,9 @@ const App = (function() {
             }
         }
 
-        // Resume audio context if suspended (mobile browsers)
+        // Resume audio context if suspended (iOS Safari requires this in user gesture)
         if (audioContext.state === 'suspended') {
-            try {
-                await audioContext.resume();
-            } catch (e) {
-                console.log('Failed to resume AudioContext:', e);
-            }
+            audioContext.resume();
         }
 
         try {
