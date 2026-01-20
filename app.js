@@ -911,9 +911,11 @@ const App = (function() {
         }
     }
 
-    // Listen for any click to init audio early
+    // Listen for any user interaction to init audio early (mobile requires touch events)
     document.addEventListener('click', initAudio, { once: true });
     document.addEventListener('keydown', initAudio, { once: true });
+    document.addEventListener('touchstart', initAudio, { once: true });
+    document.addEventListener('touchend', initAudio, { once: true });
 
     // Also start preloading when page loads (will wait for user gesture to actually decode)
     window.addEventListener('load', () => {
@@ -991,6 +993,11 @@ const App = (function() {
     function playSound(midiNote) {
         if (!soundToggle.checked) return;
         if (!audioContext) return;
+
+        // Resume audio context if suspended (mobile browsers)
+        if (audioContext.state === 'suspended') {
+            audioContext.resume();
+        }
 
         try {
             // Check cache first for instant playback
