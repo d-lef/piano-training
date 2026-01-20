@@ -991,27 +991,41 @@ const App = (function() {
 
     // Play piano sound using samples
     function playSound(midiNote) {
-        if (!soundToggle.checked) return;
+        console.log('[Sound] playSound called, midiNote:', midiNote);
+        console.log('[Sound] soundToggle.checked:', soundToggle?.checked);
+
+        if (!soundToggle.checked) {
+            console.log('[Sound] Sound is disabled, returning');
+            return;
+        }
 
         // Create audio context on first use if needed (mobile requires user gesture)
         if (!audioContext) {
+            console.log('[Sound] Creating new AudioContext');
             try {
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                console.log('[Sound] AudioContext created, state:', audioContext.state);
             } catch (e) {
-                console.log('Failed to create AudioContext:', e);
+                console.log('[Sound] Failed to create AudioContext:', e);
                 return;
             }
         }
 
+        console.log('[Sound] AudioContext state:', audioContext.state);
+
         // Resume audio context if suspended (iOS Safari requires this in user gesture)
         if (audioContext.state === 'suspended') {
-            audioContext.resume();
+            console.log('[Sound] Resuming suspended AudioContext');
+            audioContext.resume().then(() => {
+                console.log('[Sound] AudioContext resumed, new state:', audioContext.state);
+            });
         }
 
         try {
             // Check cache first for instant playback
             const sampleName = midiToSampleName(midiNote);
             const cachedBuffer = pianoSamples[sampleName];
+            console.log('[Sound] Sample:', sampleName, 'Cached:', !!cachedBuffer);
 
             if (cachedBuffer) {
                 // Play immediately from cache
