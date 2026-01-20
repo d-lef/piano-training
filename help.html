@@ -187,6 +187,36 @@
             background: #ffeb55;
             transform: scale(1.1);
         }
+        #lang-btn {
+            position: fixed;
+            top: 15px;
+            right: 60px;
+            width: 36px;
+            height: 36px;
+            background: transparent;
+            color: #B0B0B0;
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 100;
+            transition: all 0.15s;
+        }
+        #lang-btn:hover {
+            background: #3A3A3A;
+            color: #FFFFFF;
+        }
+        body.light-theme #lang-btn {
+            color: #666;
+        }
+        body.light-theme #lang-btn:hover {
+            background: rgba(0, 0, 0, 0.08);
+            color: #333;
+        }
         #theme-btn {
             position: fixed;
             top: 15px;
@@ -303,6 +333,7 @@
     <div class="top-fade"></div>
     <a href="index.html" id="back-btn" title="Back to Training">←</a>
     <a href="https://buymeacoffee.com/daniel_l" target="_blank" id="coffee-btn" title="Buy me a coffee">☕</a>
+    <button id="lang-btn" title="Change language">EN</button>
     <button id="theme-btn" title="Toggle dark/light theme">☾</button>
 
     <div class="container">
@@ -416,9 +447,11 @@
             Settings and statistics are stored in your browser and won't transfer.
         </div>
     </div>
+    <script src="i18n.js?v=1"></script>
     <script>
         // Apply theme from settings and setup toggle
         const themeBtn = document.getElementById('theme-btn');
+        const langBtn = document.getElementById('lang-btn');
 
         function applyTheme(isDark) {
             document.body.classList.toggle('light-theme', !isDark);
@@ -445,6 +478,170 @@
         } catch (e) {}
 
         themeBtn.addEventListener('click', toggleTheme);
+
+        // Language handling
+        function updateLangButtonText(langCode) {
+            if (langBtn) langBtn.textContent = langCode.toUpperCase();
+        }
+
+        function cycleLanguage() {
+            const languages = I18n.getLanguages();
+            const currentLang = I18n.getLanguage();
+            const currentIndex = languages.findIndex(l => l.code === currentLang);
+            const nextIndex = (currentIndex + 1) % languages.length;
+            const nextLang = languages[nextIndex].code;
+
+            I18n.setLanguage(nextLang);
+            updateLangButtonText(nextLang);
+            applyHelpTranslations();
+
+            // Save language preference
+            try {
+                const data = JSON.parse(localStorage.getItem('piano_trainer_data')) || {};
+                const settings = data.settings || {};
+                settings.language = nextLang;
+                data.settings = settings;
+                localStorage.setItem('piano_trainer_data', JSON.stringify(data));
+            } catch (e) {}
+        }
+
+        function applyHelpTranslations() {
+            const t = I18n.t.bind(I18n);
+
+            // Update tooltips
+            document.getElementById('back-btn').title = t('backToTraining');
+            document.getElementById('coffee-btn').title = t('coffeeTooltip');
+            document.getElementById('lang-btn').title = t('languageTooltip');
+            document.getElementById('theme-btn').title = t('themeTooltip');
+
+            // Update page content
+            const container = document.querySelector('.container');
+            container.innerHTML = `
+                <h1>${t('helpTitle')}</h1>
+                <p class="subtitle">${t('helpSubtitle')}</p>
+
+                <h2>${t('aboutMe')}</h2>
+                <p>
+                    ${t('developedBy')} <a href="https://www.linkedin.com/in/daniel-lefanov/" target="_blank" class="author-link">Daniel Lefanov</a>
+                </p>
+
+                <h2>${t('features')}</h2>
+                <ul>
+                    <li>${t('feature1')}</li>
+                    <li>${t('feature2')}</li>
+                    <li>${t('feature3')}</li>
+                    <li>${t('feature4')}</li>
+                    <li>${t('feature5')}</li>
+                    <li>${t('feature6')}</li>
+                    <li>${t('feature7')}</li>
+                    <li>${t('feature8')}</li>
+                    <li>${t('feature9')}</li>
+                    <li>${t('feature10')}</li>
+                    <li>${t('feature11')}</li>
+                    <li>${t('feature12')}</li>
+                    <li>${t('feature13')}</li>
+                </ul>
+
+                <h2>${t('howToPlay')}</h2>
+                <div class="option">1. ${t('step1')}</div>
+                <div class="option">2. ${t('step2')}</div>
+                <div class="option">3. ${t('step3')}</div>
+                <div class="option">4. ${t('step4')}</div>
+                <div class="option">5. ${t('step5')}</div>
+
+                <h2>${t('keyboardControls')}</h2>
+                <div class="keyboard-row">
+                    <strong>${t('whiteKeys')}</strong>
+                    <span class="key">Z</span><span class="key">X</span><span class="key">C</span><span class="key">V</span><span class="key">B</span><span class="key">N</span><span class="key">M</span>
+                    = C D E F G A B
+                </div>
+                <div class="keyboard-row">
+                    <strong>${t('blackKeys')}</strong>
+                    <span class="key">S</span><span class="key">D</span><span class="key">G</span><span class="key">H</span><span class="key">J</span>
+                    = C# D# F# G# A#
+                </div>
+                <div class="keyboard-row">
+                    <strong>${t('nextOctave')}</strong>
+                    <span class="key">Q</span><span class="key">W</span><span class="key">E</span><span class="key">R</span><span class="key">T</span><span class="key">Y</span><span class="key">U</span>
+                    (${t('white')}) &nbsp;
+                    <span class="key">2</span><span class="key">3</span><span class="key">5</span><span class="key">6</span><span class="key">7</span>
+                    (${t('black')})
+                </div>
+                <div class="keyboard-row">
+                    <strong>${t('octaveShift')}</strong>
+                    <span class="key">↑</span><span class="key">↓</span> ${t('arrowKeys')}
+                </div>
+
+                <h2>${t('settingsTitle')}</h2>
+                <table>
+                    <tr><th>${t('settingCol')}</th><th>${t('descriptionCol')}</th></tr>
+                    <tr><td>${t('clef').replace(':', '')}</td><td>${t('clefDesc')}</td></tr>
+                    <tr><td>${t('range').replace(':', '')}</td><td>${t('rangeDesc')}</td></tr>
+                    <tr><td>${t('noteHints')}</td><td>${t('noteHintsDesc')}</td></tr>
+                    <tr><td>${t('keyLabels')}</td><td>${t('keyLabelsDesc')}</td></tr>
+                    <tr><td>${t('accidentals')}</td><td>${t('accidentalsDesc')}</td></tr>
+                    <tr><td>${t('timer')}</td><td>${t('timerDesc')}</td></tr>
+                    <tr><td>${t('sound')}</td><td>${t('soundDesc')}</td></tr>
+                </table>
+
+                <h2>${t('smartRepetition')}</h2>
+                <p>${t('smartRepIntro')}</p>
+                <ul>
+                    <li>${t('smartRep1')}</li>
+                    <li>${t('smartRep2')}</li>
+                    <li>${t('smartRep3')}</li>
+                    <li>${t('smartRep4')}</li>
+                </ul>
+
+                <h2>${t('statisticsTitle')}</h2>
+                <ul>
+                    <li>${t('stats1')}</li>
+                    <li>${t('stats2')}</li>
+                    <li>${t('stats3')}</li>
+                    <li>${t('stats4')}</li>
+                </ul>
+
+                <h2>${t('midiKeyboard')}</h2>
+                <p>${t('midiIntro')}</p>
+                <ul>
+                    <li>${t('midi1')}</li>
+                    <li>${t('midi2')}</li>
+                    <li>${t('midi3')}</li>
+                    <li>${t('midi4')}</li>
+                    <li>${t('midi5')}</li>
+                </ul>
+                <div class="note">
+                    ${t('browserSupport')}
+                </div>
+
+                <h2>${t('tipsTitle')}</h2>
+                <div class="tip">${t('tip1')}</div>
+                <div class="tip">${t('tip2')}</div>
+                <div class="tip">${t('tip3')}</div>
+                <div class="tip">${t('tip4')}</div>
+
+                <div class="note">
+                    ${t('portableNote')}
+                </div>
+            `;
+
+            // Re-apply fold effect after content change
+            updateFoldEffect();
+        }
+
+        // Initial language
+        try {
+            const data = JSON.parse(localStorage.getItem('piano_trainer_data'));
+            const savedLang = data && data.settings && data.settings.language;
+            const lang = savedLang || I18n.detectBrowserLanguage();
+            I18n.setLanguage(lang);
+            updateLangButtonText(lang);
+            applyHelpTranslations();
+        } catch (e) {
+            applyHelpTranslations();
+        }
+
+        langBtn.addEventListener('click', cycleLanguage);
 
         // 3D fold effect on scroll
         var foldZoneStart = 140;

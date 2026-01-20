@@ -34,6 +34,7 @@ const App = (function() {
     const timerToggle = document.getElementById('timer-toggle');
     const soundToggle = document.getElementById('sound-toggle');
     const themeBtn = document.getElementById('theme-btn');
+    const langBtn = document.getElementById('lang-btn');
     const newSessionBtn = document.getElementById('new-session-btn');
 
     // Apply theme
@@ -63,6 +64,34 @@ const App = (function() {
     function updateThemeButtonIcon(isDark) {
         if (!themeBtn) return;
         themeBtn.textContent = isDark ? '☾' : '☼'; // moon for dark, sun for light
+    }
+
+    // Update language button text
+    function updateLangButtonText(langCode) {
+        if (!langBtn) return;
+        langBtn.textContent = langCode.toUpperCase();
+    }
+
+    // Cycle through languages
+    function cycleLanguage() {
+        const languages = I18n.getLanguages();
+        const currentLang = I18n.getLanguage();
+        const currentIndex = languages.findIndex(l => l.code === currentLang);
+        const nextIndex = (currentIndex + 1) % languages.length;
+        const nextLang = languages[nextIndex].code;
+
+        I18n.setLanguage(nextLang);
+        updateLangButtonText(nextLang);
+        I18n.applyTranslations();
+
+        // Save language preference
+        const settings = Storage.getSettings();
+        settings.language = nextLang;
+        Storage.saveSettings(settings);
+
+        // Update panels with new language
+        updateMissesPanel();
+        updateSlowestPanel();
     }
 
     // Populate naming style selector
@@ -191,6 +220,13 @@ const App = (function() {
 
         // Listen for system theme changes
         setupSystemThemeListener();
+
+        // Apply language - use saved preference or detect from browser
+        const savedLang = settings.language;
+        const lang = savedLang || I18n.detectBrowserLanguage();
+        I18n.setLanguage(lang);
+        updateLangButtonText(lang);
+        I18n.applyTranslations();
     }
 
     function updateTimerVisibility(visible) {
@@ -234,6 +270,11 @@ const App = (function() {
 
         // Theme button click handler
         themeBtn.addEventListener('click', toggleTheme);
+
+        // Language button click handler
+        if (langBtn) {
+            langBtn.addEventListener('click', cycleLanguage);
+        }
 
         newSessionBtn.addEventListener('click', startNewSession);
     }
@@ -587,7 +628,7 @@ const App = (function() {
                 return `<div class="mobile-stat-item"><span>${note} (${localName})</span><span class="mobile-stat-value">${displayCount}</span></div>`;
             }).join('');
         } else {
-            mistakesHtml = '<div class="mobile-stat-empty">None yet</div>';
+            mistakesHtml = `<div class="mobile-stat-empty">${I18n.t('noneYet')}</div>`;
         }
 
         // Build slowest section
@@ -609,38 +650,38 @@ const App = (function() {
                 return `<div class="mobile-stat-item"><span>${note} (${localName})</span><span class="mobile-stat-value">${timeStr}</span></div>`;
             }).join('');
         } else {
-            slowestHtml = '<div class="mobile-stat-empty">None yet</div>';
+            slowestHtml = `<div class="mobile-stat-empty">${I18n.t('noneYet')}</div>`;
         }
 
         mobileContainer.innerHTML = `
             <div class="mobile-stat-section">
-                <div class="mobile-stat-title">Session</div>
+                <div class="mobile-stat-title">${I18n.t('session')}</div>
                 <div class="mobile-stat-item">
-                    <span class="mobile-stat-label">Correct</span>
+                    <span class="mobile-stat-label">${I18n.t('correct').replace(':', '')}</span>
                     <span class="mobile-stat-value">${correctCount}</span>
                 </div>
                 <div class="mobile-stat-item">
-                    <span class="mobile-stat-label">Wrong</span>
+                    <span class="mobile-stat-label">${I18n.t('wrong').replace(':', '')}</span>
                     <span class="mobile-stat-value">${wrongCount}</span>
                 </div>
                 <div class="mobile-stat-item">
-                    <span class="mobile-stat-label">Accuracy</span>
+                    <span class="mobile-stat-label">${I18n.t('accuracy').replace(':', '')}</span>
                     <span class="mobile-stat-value">${accuracy}%</span>
                 </div>
                 <div class="mobile-stat-item">
-                    <span class="mobile-stat-label">Streak</span>
+                    <span class="mobile-stat-label">${I18n.t('streak').replace(':', '')}</span>
                     <span class="mobile-stat-value">${stats.currentStreak}</span>
                 </div>
             </div>
             <div class="mobile-stat-section">
-                <div class="mobile-stat-title">Mistakes</div>
+                <div class="mobile-stat-title">${I18n.t('mistakes')}</div>
                 ${mistakesHtml}
             </div>
             <div class="mobile-stat-section">
-                <div class="mobile-stat-title">Slowest</div>
+                <div class="mobile-stat-title">${I18n.t('slowest')}</div>
                 ${slowestHtml}
             </div>
-            <button id="modal-new-session-btn" class="modal-action-btn">New Session</button>
+            <button id="modal-new-session-btn" class="modal-action-btn">${I18n.t('newSession')}</button>
         `;
 
         // Attach new session button handler
@@ -805,11 +846,11 @@ const App = (function() {
             .slice(0, 10);  // Top 10
 
         if (sorted.length === 0) {
-            panel.innerHTML = '<div class="panel-title">Mistakes</div><div class="panel-empty">None yet</div>';
+            panel.innerHTML = `<div class="panel-title">${I18n.t('mistakes')}</div><div class="panel-empty">${I18n.t('noneYet')}</div>`;
             return;
         }
 
-        let html = '<div class="panel-title">Mistakes</div>';
+        let html = `<div class="panel-title">${I18n.t('mistakes')}</div>`;
         for (const [note, count] of sorted) {
             const localName = Notes.getLocalizedName(note);
             const displayCount = Number.isInteger(count) ? count : count.toFixed(1);
@@ -836,11 +877,11 @@ const App = (function() {
         const top10 = avgTimes.slice(0, 10);
 
         if (top10.length === 0) {
-            panel.innerHTML = '<div class="panel-title">Slowest</div><div class="panel-empty">None yet</div>';
+            panel.innerHTML = `<div class="panel-title">${I18n.t('slowest')}</div><div class="panel-empty">${I18n.t('noneYet')}</div>`;
             return;
         }
 
-        let html = '<div class="panel-title">Slowest</div>';
+        let html = `<div class="panel-title">${I18n.t('slowest')}</div>`;
         for (const { note, avg } of top10) {
             const localName = Notes.getLocalizedName(note);
             const timeStr = (avg / 1000).toFixed(1) + 's';
