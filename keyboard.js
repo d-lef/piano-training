@@ -218,9 +218,10 @@ const Keyboard = (function() {
 
                 key.addEventListener('click', () => handleKeyPress(fullName));
                 key.addEventListener('touchstart', (e) => {
+                    console.log('[Keyboard] touchstart on white key:', fullName);
                     e.preventDefault();
                     handleKeyPress(fullName);
-                });
+                }, { passive: false });
 
                 containerElement.appendChild(key);
                 keyElements[fullName] = key;
@@ -250,9 +251,10 @@ const Keyboard = (function() {
 
                 key.addEventListener('click', () => handleKeyPress(fullName));
                 key.addEventListener('touchstart', (e) => {
+                    console.log('[Keyboard] touchstart on black key:', fullName);
                     e.preventDefault();
                     handleKeyPress(fullName);
-                });
+                }, { passive: false });
 
                 containerElement.appendChild(key);
                 keyElements[fullName] = key;
@@ -310,6 +312,8 @@ const Keyboard = (function() {
     }
 
     function handleKeyPress(noteName) {
+        console.log('[Keyboard] handleKeyPress called:', noteName);
+
         // Visual feedback - briefly highlight the key
         const keyEl = keyElements[noteName];
         if (keyEl) {
@@ -318,8 +322,10 @@ const Keyboard = (function() {
         }
 
         // Play sound FIRST for instant feedback
+        console.log('[Keyboard] onPlaySound callback exists:', !!onPlaySound);
         if (onPlaySound) {
             const midi = keyElements[noteName]?.dataset.midi;
+            console.log('[Keyboard] Playing MIDI note:', midi);
             if (midi) onPlaySound(parseInt(midi));
         }
         // Then notify game logic
