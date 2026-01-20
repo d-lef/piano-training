@@ -985,15 +985,22 @@ const App = (function() {
 
     // Play a buffer immediately (no async)
     function playBuffer(buffer) {
-        const source = audioContext.createBufferSource();
-        const gainNode = audioContext.createGain();
+        console.log('[Sound] playBuffer called, buffer:', !!buffer, 'duration:', buffer?.duration);
+        try {
+            const source = audioContext.createBufferSource();
+            const gainNode = audioContext.createGain();
 
-        source.buffer = buffer;
-        gainNode.gain.value = 0.7;
+            source.buffer = buffer;
+            gainNode.gain.value = 0.7;
 
-        source.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-        source.start(0);
+            source.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            console.log('[Sound] Starting playback, context state:', audioContext.state, 'destination:', !!audioContext.destination);
+            source.start(0);
+            console.log('[Sound] source.start(0) called successfully');
+        } catch (e) {
+            console.log('[Sound] playBuffer error:', e);
+        }
     }
 
     // Play piano sound using samples
