@@ -904,14 +904,49 @@ const App = (function() {
         feedbackEl.className = 'hidden';
     }
 
+    // iOS audio unlock flag
+    let audioUnlocked = false;
+
+    // Unlock iOS audio by playing a silent buffer (must happen in user gesture)
+    function unlockiOSAudio() {
+        if (audioUnlocked || !audioContext) return;
+
+        console.log('[Sound] Attempting iOS audio unlock...');
+
+        // Create a short silent buffer
+        const buffer = audioContext.createBuffer(1, 1, 22050);
+        const source = audioContext.createBufferSource();
+        source.buffer = buffer;
+        source.connect(audioContext.destination);
+        source.start(0);
+
+        // Also try with oscillator (belt and suspenders approach)
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        gainNode.gain.value = 0; // Silent
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        oscillator.start(0);
+        oscillator.stop(audioContext.currentTime + 0.001);
+
+        audioUnlocked = true;
+        console.log('[Sound] iOS audio unlock attempted');
+    }
+
     // Initialize audio context and preload samples on first user interaction
     async function initAudio() {
         if (!audioContext) {
             audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            console.log('[Sound] AudioContext created in initAudio');
         }
         if (audioContext.state === 'suspended') {
             await audioContext.resume();
+            console.log('[Sound] AudioContext resumed in initAudio');
         }
+
+        // Unlock iOS audio
+        unlockiOSAudio();
+
         // Preload samples in background
         if (!samplesLoaded) {
             preloadSamples();
@@ -1034,6 +1069,9 @@ const App = (function() {
                 console.log('[Sound] AudioContext resumed, new state:', audioContext.state);
             });
         }
+
+        // Ensure iOS audio is unlocked (must happen in user gesture call stack)
+        unlockiOSAudio();
 
         try {
             // Check cache first for instant playback
