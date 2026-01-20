@@ -1258,15 +1258,6 @@ button:active {
     }
 
     /* Size keys to fit container (use % not vw to avoid Safari overflow) */
-    #keyboard-container {
-        width: 100%;
-        padding: 0;
-    }
-
-    #keyboard {
-        width: 100%;
-    }
-
     .white-key {
         width: calc(100% / 21);
         height: 100%;
