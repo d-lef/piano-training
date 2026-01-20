@@ -66,6 +66,11 @@ const Keyboard = (function() {
             clearTimeout(resizeTimeout);
             resizeTimeout = setTimeout(render, 150);
         });
+        // Also handle orientation change (iOS may not fire resize reliably)
+        window.addEventListener('orientationchange', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(render, 350);
+        });
     }
 
     // MIDI Setup
