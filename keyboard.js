@@ -184,8 +184,9 @@ const Keyboard = (function() {
         const isMobileLandscape = isLandscape && window.innerHeight <= 700;
 
         if (isMobileLandscape) {
-            // Calculate width to fit all keys - must match CSS calc exactly (no rounding)
-            whiteKeyWidth = (window.innerWidth - 20) / totalWhiteKeysNeeded;
+            // Calculate width based on container, not viewport (avoids Safari 100vw bug)
+            const containerWidth = containerElement.parentElement.clientWidth || window.innerWidth;
+            whiteKeyWidth = containerWidth / totalWhiteKeysNeeded;
         } else if (window.innerWidth <= 400) {
             whiteKeyWidth = 28;
         } else if (window.innerWidth <= 600) {
