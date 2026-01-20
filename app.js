@@ -990,13 +990,26 @@ const App = (function() {
     }
 
     // Play piano sound using samples
-    function playSound(midiNote) {
+    async function playSound(midiNote) {
         if (!soundToggle.checked) return;
-        if (!audioContext) return;
+
+        // Create audio context on first use if needed (mobile requires user gesture)
+        if (!audioContext) {
+            try {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            } catch (e) {
+                console.log('Failed to create AudioContext:', e);
+                return;
+            }
+        }
 
         // Resume audio context if suspended (mobile browsers)
         if (audioContext.state === 'suspended') {
-            audioContext.resume();
+            try {
+                await audioContext.resume();
+            } catch (e) {
+                console.log('Failed to resume AudioContext:', e);
+            }
         }
 
         try {
