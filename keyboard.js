@@ -184,9 +184,13 @@ const Keyboard = (function() {
         const isMobileLandscape = isLandscape && window.innerHeight <= 700;
 
         if (isMobileLandscape) {
-            // Calculate width based on container, not viewport (avoids Safari 100vw bug)
-            const containerWidth = containerElement.parentElement.clientWidth || window.innerWidth;
-            whiteKeyWidth = containerWidth / totalWhiteKeysNeeded;
+            // Calculate width based on keyboard container minus padding (avoids Safari 100vw bug)
+            const parent = containerElement.parentElement;
+            const parentStyle = getComputedStyle(parent);
+            const paddingLeft = parseFloat(parentStyle.paddingLeft) || 0;
+            const paddingRight = parseFloat(parentStyle.paddingRight) || 0;
+            const keyboardWidth = parent.clientWidth - paddingLeft - paddingRight;
+            whiteKeyWidth = keyboardWidth / totalWhiteKeysNeeded;
         } else if (window.innerWidth <= 400) {
             whiteKeyWidth = 28;
         } else if (window.innerWidth <= 600) {
