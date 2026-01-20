@@ -128,9 +128,14 @@ const App = (function() {
         // Initialize staff
         Staff.init();
 
-        // Setup start button
+        // Setup start button (click + touchstart for iOS compatibility)
         const startBtn = document.getElementById('start-btn');
         startBtn.addEventListener('click', startGame);
+        startBtn.addEventListener('touchstart', (e) => {
+            console.log('[App] Start button touchstart');
+            e.preventDefault();
+            startGame();
+        }, { passive: false });
 
         // Setup pause/continue toggle button
         document.getElementById('pause-toggle-btn').addEventListener('click', togglePause);
@@ -158,8 +163,10 @@ const App = (function() {
     }
 
     function startGame() {
+        console.log('[App] startGame called');
         const overlay = document.getElementById('start-overlay');
         overlay.classList.add('hidden');
+        console.log('[App] Start overlay hidden');
         const toggleBtn = document.getElementById('pause-toggle-btn');
         toggleBtn.classList.remove('hidden', 'paused');
         toggleBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2s2-.9 2-2V7c0-1.1-.9-2-2-2zm8 0c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2s2-.9 2-2V7c0-1.1-.9-2-2-2z"/></svg>';
