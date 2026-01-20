@@ -1022,15 +1022,24 @@ const App = (function() {
     function playBuffer(buffer) {
         console.log('[Sound] playBuffer called, buffer:', !!buffer, 'duration:', buffer?.duration);
         try {
+            // Verify buffer has actual audio data
+            const channelData = buffer.getChannelData(0);
+            const maxSample = Math.max(...Array.from(channelData.slice(0, 1000)).map(Math.abs));
+            console.log('[Sound] Buffer channels:', buffer.numberOfChannels, 'sampleRate:', buffer.sampleRate, 'maxSample:', maxSample);
+
             const source = audioContext.createBufferSource();
             const gainNode = audioContext.createGain();
 
             source.buffer = buffer;
-            gainNode.gain.value = 0.7;
+            gainNode.gain.value = 1.0; // Full volume for testing
 
             source.connect(gainNode);
             gainNode.connect(audioContext.destination);
-            console.log('[Sound] Starting playback, context state:', audioContext.state, 'destination:', !!audioContext.destination);
+
+            console.log('[Sound] Starting playback, context state:', audioContext.state);
+            console.log('[Sound] Destination channels:', audioContext.destination.maxChannelCount);
+            console.log('[Sound] GainNode value:', gainNode.gain.value);
+
             source.start(0);
             console.log('[Sound] source.start(0) called successfully');
         } catch (e) {
