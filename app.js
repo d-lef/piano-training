@@ -132,7 +132,6 @@ const App = (function() {
         const startBtn = document.getElementById('start-btn');
         startBtn.addEventListener('click', startGame);
         startBtn.addEventListener('touchstart', (e) => {
-            console.log('[App] Start button touchstart');
             e.preventDefault();
             startGame();
         }, { passive: false });
@@ -163,10 +162,8 @@ const App = (function() {
     }
 
     function startGame() {
-        console.log('[App] startGame called');
         const overlay = document.getElementById('start-overlay');
         overlay.classList.add('hidden');
-        console.log('[App] Start overlay hidden');
         const toggleBtn = document.getElementById('pause-toggle-btn');
         toggleBtn.classList.remove('hidden', 'paused');
         toggleBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2s2-.9 2-2V7c0-1.1-.9-2-2-2zm8 0c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2s2-.9 2-2V7c0-1.1-.9-2-2-2z"/></svg>';
@@ -904,49 +901,14 @@ const App = (function() {
         feedbackEl.className = 'hidden';
     }
 
-    // iOS audio unlock flag
-    let audioUnlocked = false;
-
-    // Unlock iOS audio by playing a silent buffer (must happen in user gesture)
-    function unlockiOSAudio() {
-        if (audioUnlocked || !audioContext) return;
-
-        console.log('[Sound] Attempting iOS audio unlock...');
-
-        // Create a short silent buffer
-        const buffer = audioContext.createBuffer(1, 1, 22050);
-        const source = audioContext.createBufferSource();
-        source.buffer = buffer;
-        source.connect(audioContext.destination);
-        source.start(0);
-
-        // Also try with oscillator (belt and suspenders approach)
-        const oscillator = audioContext.createOscillator();
-        const gainNode = audioContext.createGain();
-        gainNode.gain.value = 0; // Silent
-        oscillator.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-        oscillator.start(0);
-        oscillator.stop(audioContext.currentTime + 0.001);
-
-        audioUnlocked = true;
-        console.log('[Sound] iOS audio unlock attempted');
-    }
-
     // Initialize audio context and preload samples on first user interaction
     async function initAudio() {
         if (!audioContext) {
             audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            console.log('[Sound] AudioContext created in initAudio');
         }
         if (audioContext.state === 'suspended') {
             await audioContext.resume();
-            console.log('[Sound] AudioContext resumed in initAudio');
         }
-
-        // Unlock iOS audio
-        unlockiOSAudio();
-
         // Preload samples in background
         if (!samplesLoaded) {
             preloadSamples();
@@ -1020,89 +982,43 @@ const App = (function() {
 
     // Play a buffer immediately (no async)
     function playBuffer(buffer) {
-        console.log('[Sound] playBuffer called, buffer:', !!buffer, 'duration:', buffer?.duration);
-        try {
-            // Verify buffer has actual audio data
-            const channelData = buffer.getChannelData(0);
-            const maxSample = Math.max(...Array.from(channelData.slice(0, 1000)).map(Math.abs));
-            console.log('[Sound] Buffer channels:', buffer.numberOfChannels, 'sampleRate:', buffer.sampleRate, 'maxSample:', maxSample);
+        const source = audioContext.createBufferSource();
+        const gainNode = audioContext.createGain();
 
-            const source = audioContext.createBufferSource();
-            const gainNode = audioContext.createGain();
+        source.buffer = buffer;
+        gainNode.gain.value = 0.7;
 
-            source.buffer = buffer;
-            gainNode.gain.value = 1.0; // Full volume for testing
-
-            source.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-
-            console.log('[Sound] Starting playback, context state:', audioContext.state);
-            console.log('[Sound] Destination channels:', audioContext.destination.maxChannelCount);
-            console.log('[Sound] GainNode value:', gainNode.gain.value);
-
-            source.start(0);
-            console.log('[Sound] source.start(0) called successfully');
-        } catch (e) {
-            console.log('[Sound] playBuffer error:', e);
-        }
+        source.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        source.start(0);
     }
 
     // Play piano sound using samples
     function playSound(midiNote) {
-        console.log('[Sound] playSound called, midiNote:', midiNote);
-        console.log('[Sound] soundToggle.checked:', soundToggle?.checked);
+        if (!soundToggle.checked) return;
+        if (!audioContext) return;
 
-        if (!soundToggle.checked) {
-            console.log('[Sound] Sound is disabled, returning');
-            return;
-        }
-
-        // Create audio context on first use if needed (mobile requires user gesture)
-        if (!audioContext) {
-            console.log('[Sound] Creating new AudioContext');
-            try {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                console.log('[Sound] AudioContext created, state:', audioContext.state);
-            } catch (e) {
-                console.log('[Sound] Failed to create AudioContext:', e);
-                return;
-            }
-        }
-
-        console.log('[Sound] AudioContext state:', audioContext.state);
-
-        // Helper function to actually play the sound
-        const doPlay = () => {
-            // Ensure iOS audio is unlocked
-            unlockiOSAudio();
-
-            try {
-                const sampleName = midiToSampleName(midiNote);
-                const cachedBuffer = pianoSamples[sampleName];
-                console.log('[Sound] Sample:', sampleName, 'Cached:', !!cachedBuffer);
-
-                if (cachedBuffer) {
-                    playBuffer(cachedBuffer);
-                } else {
-                    loadSample(midiNote).then(buffer => {
-                        if (buffer) playBuffer(buffer);
-                    });
-                }
-            } catch (e) {
-                console.log('Audio not available:', e);
-            }
-        };
-
-        // Resume audio context if suspended, then play
+        // Resume audio context if suspended (mobile browsers require this)
         if (audioContext.state === 'suspended') {
-            console.log('[Sound] Resuming suspended AudioContext before playing');
-            audioContext.resume().then(() => {
-                console.log('[Sound] AudioContext resumed, now playing');
-                doPlay();
-            });
-        } else {
-            // Context already running, play immediately
-            doPlay();
+            audioContext.resume();
+        }
+
+        try {
+            // Check cache first for instant playback
+            const sampleName = midiToSampleName(midiNote);
+            const cachedBuffer = pianoSamples[sampleName];
+
+            if (cachedBuffer) {
+                // Play immediately from cache
+                playBuffer(cachedBuffer);
+            } else {
+                // Load and play (will have delay, but only for uncached notes)
+                loadSample(midiNote).then(buffer => {
+                    if (buffer) playBuffer(buffer);
+                });
+            }
+        } catch (e) {
+            console.log('Audio not available:', e);
         }
     }
 
