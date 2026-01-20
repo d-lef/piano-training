@@ -7,7 +7,6 @@ const Storage = (function() {
     function getDefaultData() {
         return {
             settings: {
-                clef: 'treble',
                 rangeMin: 'C4',
                 rangeMax: 'B5',
                 showNoteNames: false,

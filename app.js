@@ -233,7 +233,17 @@ const App = (function() {
     }
 
     function populateRangeSelectors() {
-        const options = Notes.getAllNoteOptions();
+        // Only show notes available on the 3-octave keyboard (C3-B5)
+        const allOptions = Notes.getAllNoteOptions();
+        const keyboardMin = Notes.getMidiNumber('C', 3);
+        const keyboardMax = Notes.getMidiNumber('B', 5);
+        const options = allOptions.filter(note => {
+            const parsed = Notes.parseNote(note);
+            if (!parsed) return false;
+            const midi = Notes.getMidiNumber(parsed.name, parsed.octave);
+            return midi >= keyboardMin && midi <= keyboardMax;
+        });
+
         const settings = Storage.getSettings();
 
         rangeMinSelect.innerHTML = '';
@@ -251,8 +261,14 @@ const App = (function() {
             rangeMaxSelect.appendChild(optMax);
         });
 
-        rangeMinSelect.value = settings.rangeMin;
-        rangeMaxSelect.value = settings.rangeMax;
+        // Clamp saved values to keyboard range
+        let minVal = settings.rangeMin;
+        let maxVal = settings.rangeMax;
+        if (!options.includes(minVal)) minVal = 'C3';
+        if (!options.includes(maxVal)) maxVal = 'B5';
+
+        rangeMinSelect.value = minVal;
+        rangeMaxSelect.value = maxVal;
     }
 
     function setupEventListeners() {
