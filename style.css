@@ -1255,6 +1255,7 @@ button:active {
 
     #keyboard {
         height: 80px;
+        width: 100%;
     }
 
     /* Size keys to fit container (use % not vw to avoid Safari overflow) */
